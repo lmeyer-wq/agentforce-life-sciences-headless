@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentforce Life Sciences — In the Flow of Work</title>
+<style>
+:root {
+  color-scheme: light;
+  /* Teams palette */
+  --t-nav:      #201F55;
+  --t-nav-hover:#2D2C6E;
+  --t-active:   #6264A7;
+  --t-topbar:   #201F55;
+  --t-channels: #2D2C5E;
+  --t-sidebar-text: rgba(255,255,255,0.72);
+  --t-sidebar-active: rgba(255,255,255,0.12);
+  /* Outlook palette */
+  --o-nav:      #0F4A8A;
+  --o-bar:      #1467C6;
+  --o-hover:    #105CBF;
+  /* Shared */
+  --panel-bg:   #FAFAF8;
+  --panel-border: #E8E6E1;
+  --purple:     #7B68EE;
+  --purple-light:#F0EEFF;
+  --blue:       #3B82F6;
+  --blue-light: #EFF6FF;
+  --green:      #22C55E;
+  --green-light:#F0FDF4;
+  --amber:      #F59E0B;
+  --amber-light:#FFFBEB;
+  --red:        #EF4444;
+  --red-light:  #FEF2F2;
+  --text:       #1A1A1A;
+  --text-2:     #6B6B6B;
+  --text-3:     #9B9898;
+  --border:     #E8E6E1;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #111;
+  display: flex; flex-direction: column;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
+/* ── App switcher tabs ───────────────────────────────────── */
+.app-switcher {
+  background: #1A1A1A;
+  display: flex; align-items: center; gap: 0;
+  padding: 10px 16px 0;
+  border-bottom: 1px solid #333;
+  flex-shrink: 0;
+}
+.app-tab {
+  display: flex; align-items: center; gap: 7px;
+  padding: 8px 16px 9px;
+  border-radius: 8px 8px 0 0;
+  font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+  color: #888;
+  transition: all 0.15s;
+  margin-right: 2px;
+}
+.app-tab:hover { color: #ccc; background: #2A2A2A; }
+.app-tab.active {
+  background: white;
+  color: #1A1A1A;
+  border-color: #444;
+  border-bottom-color: white;
+}
+.app-tab svg { flex-shrink: 0; }
+
+/* ── Shell frame ─────────────────────────────────────────── */
+.shell {
+  flex: 1;
+  display: none;
+  overflow: hidden;
+}
+.shell.active { display: flex; flex-direction: column; }
+
+/* ════════════════════════════════════════════════════════════
+   TEAMS
+   ════════════════════════════════════════════════════════════ */
+.teams-shell { background: white; }
+
+/* Top bar */
+.t-topbar {
+  background: var(--t-topbar);
+  height: 48px;
+  display: flex; align-items: center;
+  padding: 0 12px;
+  gap: 10px;
+  flex-shrink: 0;
+  z-index: 10;
+}
+.t-logo { display: flex; align-items: center; gap: 8px; color: white; font-size: 13px; font-weight: 600; margin-right: 4px; }
+.t-search {
+  flex: 1; max-width: 480px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px;
+  height: 28px; padding: 0 10px;
+  color: rgba(255,255,255,0.6);
+  font-size: 12px;
+  display: flex; align-items: center; gap: 6px;
+  cursor: text;
+}
+.t-topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.t-icon-btn {
+  width: 32px; height: 32px; border-radius: 4px;
+  background: none; border: none; cursor: pointer;
+  color: rgba(255,255,255,0.7);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s;
+}
+.t-icon-btn:hover { background: rgba(255,255,255,0.1); }
+.t-avatar {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: #6264A7;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 11px; font-weight: 700;
+  cursor: pointer; flex-shrink: 0;
+}
+
+/* Body */
+.t-body { flex: 1; display: flex; overflow: hidden; }
+
+/* Left nav */
+.t-nav {
+  width: 56px;
+  background: var(--t-nav);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 6px 0;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.t-nav-item {
+  width: 40px; height: 40px; border-radius: 6px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--t-sidebar-text);
+  transition: background 0.12s, color 0.12s;
+  font-size: 8px; font-weight: 600; gap: 2px;
+  position: relative;
+}
+.t-nav-item:hover { background: var(--t-nav-hover); color: white; }
+.t-nav-item.active { color: white; }
+.t-nav-item.active::before {
+  content: '';
+  position: absolute; left: -4px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 20px; background: white; border-radius: 0 3px 3px 0;
+}
+.t-nav-item svg { width: 20px; height: 20px; }
+.t-nav-badge {
+  position: absolute; top: 4px; right: 4px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: #EF4444; color: white;
+  font-size: 8px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.t-nav-spacer { flex: 1; }
+.t-nav-af {
+  width: 36px; height: 36px; border-radius: 8px;
+  background: linear-gradient(135deg, #1E1454, #6264A7);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; margin: 4px 0;
+  border: 2px solid transparent;
+  transition: all 0.15s;
+  position: relative;
+}
+.t-nav-af:hover { border-color: rgba(255,255,255,0.3); }
+.t-nav-af.panel-open { border-color: rgba(255,255,255,0.6); box-shadow: 0 0 0 2px rgba(98,100,167,0.5); }
+.t-nav-af svg { width: 18px; height: 18px; }
+
+/* Channels */
+.t-channels {
+  width: 220px;
+  background: var(--t-channels);
+  display: flex; flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.t-team-header {
+  padding: 14px 12px 6px;
+  font-size: 13px; font-weight: 700;
+  color: white;
+  display: flex; align-items: center; gap: 6px;
+}
+.t-team-icon {
+  width: 22px; height: 22px; border-radius: 5px;
+  background: var(--t-active);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: white; font-weight: 800;
+}
+.t-channel {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px 5px 28px;
+  font-size: 12px; color: var(--t-sidebar-text);
+  cursor: pointer; border-radius: 4px; margin: 1px 6px;
+  transition: background 0.12s, color 0.12s;
+}
+.t-channel:hover { background: var(--t-sidebar-active); color: white; }
+.t-channel.active { background: var(--t-sidebar-active); color: white; font-weight: 600; }
+.t-channel-unread { margin-left: auto; font-size: 10px; font-weight: 700; background: white; color: var(--t-nav); border-radius: 10px; padding: 0 5px; }
+.t-section-label {
+  padding: 12px 12px 4px;
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px;
+  color: rgba(255,255,255,0.4);
+}
+
+/* Main chat */
+.t-main {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden;
+  background: white;
+}
+.t-channel-header {
+  height: 48px; border-bottom: 1px solid #E5E5E5;
+  display: flex; align-items: center; padding: 0 16px; gap: 10px;
+  flex-shrink: 0;
+}
+.t-channel-header-name { font-size: 15px; font-weight: 700; }
+.t-channel-header-desc { font-size: 12px; color: #888; margin-left: 4px; }
+.t-header-actions { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+.t-h-btn {
+  height: 28px; padding: 0 10px; border-radius: 4px;
+  border: 1px solid #ddd; background: white;
+  font-size: 12px; font-weight: 600; color: #444;
+  cursor: pointer; display: flex; align-items: center; gap: 5px;
+  transition: background 0.12s;
+}
+.t-h-btn:hover { background: #F5F5F5; }
+.t-h-btn.af-btn {
+  background: linear-gradient(135deg, #1E1454, #6264A7);
+  color: white; border-color: transparent;
+}
+.t-h-btn.af-btn:hover { opacity: 0.9; }
+
+/* Messages */
+.t-messages {
+  flex: 1; overflow-y: auto; padding: 16px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.t-date-divider {
+  text-align: center; font-size: 11px; color: #888;
+  display: flex; align-items: center; gap: 10px;
+  margin: 12px 0 8px;
+}
+.t-date-divider::before, .t-date-divider::after { content: ''; flex: 1; height: 1px; background: #E5E5E5; }
+
+.t-msg { display: flex; gap: 10px; padding: 4px 0; }
+.t-msg:hover { background: #F9F9F9; border-radius: 6px; padding-left: 6px; margin-left: -6px; }
+.t-msg-avatar {
+  width: 32px; height: 32px; border-radius: 4px;
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: white; margin-top: 2px;
+}
+.t-msg-body { flex: 1; min-width: 0; }
+.t-msg-header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 2px; }
+.t-msg-name { font-size: 13px; font-weight: 700; }
+.t-msg-time { font-size: 11px; color: #888; }
+.t-msg-role { font-size: 10px; font-weight: 600; color: #888; background: #F0F0F0; border-radius: 3px; padding: 0 5px; }
+.t-msg-text { font-size: 13px; line-height: 1.5; color: #1A1A1A; }
+.t-msg-text .mention { color: #6264A7; font-weight: 600; }
+
+/* Agentforce card in chat */
+.af-chat-card {
+  background: white;
+  border: 1px solid #E5E5E5;
+  border-left: 3px solid var(--purple);
+  border-radius: 0 6px 6px 0;
+  padding: 10px 12px;
+  margin-top: 6px;
+  max-width: 420px;
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+.af-chat-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.af-card-header { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+.af-card-badge {
+  font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;
+  background: linear-gradient(135deg, #1E1454, #6264A7);
+  color: white; border-radius: 3px; padding: 2px 6px;
+}
+.af-card-title { font-size: 13px; font-weight: 700; }
+.af-card-rows { display: flex; flex-direction: column; gap: 3px; }
+.af-card-row { font-size: 12px; color: #444; display: flex; align-items: center; gap: 6px; }
+.af-card-row .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+.af-card-cta {
+  margin-top: 8px; padding-top: 8px; border-top: 1px solid #F0F0F0;
+  font-size: 11px; font-weight: 700; color: var(--purple);
+  display: flex; align-items: center; gap: 4px; cursor: pointer;
+}
+
+/* Message input */
+.t-input {
+  border-top: 1px solid #E5E5E5;
+  padding: 10px 16px;
+  flex-shrink: 0;
+}
+.t-input-box {
+  border: 1px solid #ddd; border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px; color: #888;
+  display: flex; align-items: center; gap: 8px;
+  background: white;
+}
+.t-input-actions { display: flex; gap: 6px; padding-top: 6px; }
+.t-input-btn { background: none; border: none; cursor: pointer; color: #888; padding: 2px; display: flex; }
+
+/* Agentforce right panel */
+.t-appbar {
+  width: 32px; background: #F0F0F0;
+  border-left: 1px solid #E0E0E0;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 8px 0; gap: 4px; flex-shrink: 0;
+}
+.t-appbar-item {
+  width: 24px; height: 24px; border-radius: 4px;
+  background: none; border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: #888; transition: background 0.12s;
+}
+.t-appbar-item:hover { background: #E0E0E0; }
+.t-appbar-af {
+  width: 26px; height: 26px; border-radius: 5px;
+  background: linear-gradient(135deg, #1E1454, #6264A7);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: 2px solid transparent;
+  transition: all 0.12s;
+}
+.t-appbar-af.active { border-color: white; box-shadow: 0 0 0 2px #6264A7; }
+
+/* ════════════════════════════════════════════════════════════
+   OUTLOOK
+   ════════════════════════════════════════════════════════════ */
+.outlook-shell { background: white; }
+
+.o-topbar {
+  background: var(--o-bar);
+  height: 44px;
+  display: flex; align-items: center; padding: 0 10px; gap: 8px; flex-shrink: 0;
+}
+.o-logo { display: flex; align-items: center; gap: 7px; color: white; font-size: 14px; font-weight: 700; margin-right: 8px; }
+.o-nav-pill {
+  height: 28px; padding: 0 10px;
+  background: rgba(255,255,255,0.12); border: none; border-radius: 3px;
+  color: white; font-size: 12px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; gap: 4px;
+  transition: background 0.12s;
+}
+.o-nav-pill:hover { background: rgba(255,255,255,0.2); }
+.o-nav-pill.active { background: rgba(255,255,255,0.25); }
+.o-topbar-right { margin-left: auto; display: flex; align-items: center; gap: 6px; }
+
+.o-ribbon {
+  background: #F9F9F9; border-bottom: 1px solid #E0E0E0;
+  display: flex; align-items: center; padding: 4px 10px; gap: 4px;
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.o-ribbon-btn {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 4px 8px; border-radius: 3px;
+  background: none; border: none; cursor: pointer;
+  font-size: 9px; color: #444; gap: 2px;
+  transition: background 0.12s; min-width: 44px;
+}
+.o-ribbon-btn:hover { background: #EBEBEB; }
+.o-ribbon-btn svg { width: 18px; height: 18px; color: #0078D4; }
+.o-ribbon-sep { width: 1px; height: 36px; background: #E0E0E0; margin: 0 4px; }
+.o-af-btn {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 10px; border-radius: 4px;
+  background: linear-gradient(135deg, #1E1454, #6264A7);
+  border: none; cursor: pointer;
+  color: white; font-size: 11px; font-weight: 700;
+  transition: opacity 0.12s; margin-left: auto;
+}
+.o-af-btn:hover { opacity: 0.9; }
+
+.o-body { flex: 1; display: flex; overflow: hidden; }
+
+/* Folder tree */
+.o-folders {
+  width: 180px; background: #F9F9F9; border-right: 1px solid #E0E0E0;
+  display: flex; flex-direction: column; padding: 8px 0; flex-shrink: 0;
+  overflow-y: auto;
+}
+.o-folder {
+  display: flex; align-items: center; gap: 8px;
+  padding: 5px 12px; font-size: 12px; color: #333;
+  cursor: pointer; border-radius: 0;
+  transition: background 0.12s;
+}
+.o-folder:hover { background: #EBEBEB; }
+.o-folder.active { background: #EEF3FB; color: #0078D4; font-weight: 600; }
+.o-folder-count { margin-left: auto; font-size: 10px; font-weight: 700; color: #0078D4; }
+
+/* Email list */
+.o-email-list {
+  width: 260px; border-right: 1px solid #E0E0E0;
+  display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;
+}
+.o-email-list-header {
+  padding: 10px 12px 6px;
+  font-size: 13px; font-weight: 700;
+  border-bottom: 1px solid #F0F0F0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.o-email-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid #F5F5F5;
+  cursor: pointer; transition: background 0.12s;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.o-email-item:hover { background: #F5F5F5; }
+.o-email-item.active { background: #EEF3FB; border-left: 3px solid #0078D4; padding-left: 9px; }
+.o-email-item.unread .o-email-sender { font-weight: 700; }
+.o-email-sender { font-size: 12px; color: #1A1A1A; display: flex; align-items: center; justify-content: space-between; }
+.o-email-time { font-size: 10px; color: #888; }
+.o-email-subject { font-size: 11px; font-weight: 600; color: #333; }
+.o-email-preview { font-size: 11px; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.o-unread-dot { width: 7px; height: 7px; border-radius: 50%; background: #0078D4; flex-shrink: 0; }
+
+/* Reading pane */
+.o-reading {
+  flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white;
+}
+.o-email-header { padding: 16px 20px 12px; border-bottom: 1px solid #F0F0F0; }
+.o-email-subject-line { font-size: 16px; font-weight: 700; margin-bottom: 10px; }
+.o-email-from { display: flex; align-items: center; gap: 10px; }
+.o-from-avatar {
+  width: 34px; height: 34px; border-radius: 50%;
+  background: #0078D4; color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; flex-shrink: 0;
+}
+.o-from-name { font-size: 13px; font-weight: 600; }
+.o-from-email { font-size: 11px; color: #888; }
+.o-email-meta { font-size: 11px; color: #888; margin-top: 4px; }
+.o-email-body { flex: 1; overflow-y: auto; padding: 16px 20px; font-size: 13px; line-height: 1.7; color: #1A1A1A; }
+.o-email-body p { margin-bottom: 10px; }
+.o-email-body ol { padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+.o-email-body li { font-size: 13px; }
+.o-email-body strong { font-weight: 700; }
+.o-email-actions { padding: 10px 20px; border-top: 1px solid #F0F0F0; display: flex; gap: 8px; flex-shrink: 0; }
+.o-action-btn {
+  padding: 6px 14px; border-radius: 3px;
+  border: 1px solid #E0E0E0; background: white;
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; gap: 5px;
+  transition: background 0.12s;
+}
+.o-action-btn:hover { background: #F5F5F5; }
+.o-action-btn.primary { background: #0078D4; color: white; border-color: transparent; }
+.o-action-btn.primary:hover { background: #106EBE; }
+
+/* ════════════════════════════════════════════════════════════
+   SHARED — AGENTFORCE PANEL
+   ════════════════════════════════════════════════════════════ */
+.af-panel {
+  width: 0; overflow: hidden;
+  background: var(--panel-bg);
+  border-left: 1px solid var(--panel-border);
+  display: flex; flex-direction: column;
+  transition: width 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+.af-panel.open { width: 340px; }
+
+.af-panel-header {
+  background: linear-gradient(135deg, #0F0F23 0%, #1E1454 55%, #2D1B69 100%);
+  padding: 14px 14px 12px;
+  flex-shrink: 0;
+}
+.af-panel-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.af-panel-badge-row { display: flex; align-items: center; gap: 6px; }
+.af-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 20px; padding: 2px 8px;
+  font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.9);
+  letter-spacing: 0.5px; text-transform: uppercase;
+}
+.af-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #A78BFA; }
+.af-panel-name { font-size: 14px; font-weight: 700; color: white; margin-top: 4px; }
+.af-panel-sub { font-size: 10px; color: rgba(255,255,255,0.45); margin-top: 1px; display: flex; align-items: center; gap: 5px; }
+.af-sub-dot { width: 2px; height: 2px; border-radius: 50%; background: rgba(255,255,255,0.3); }
+.af-compliant {
+  display: inline-flex; align-items: center; gap: 3px;
+  background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3);
+  border-radius: 20px; padding: 2px 8px;
+  font-size: 10px; font-weight: 700; color: #86EFAC; letter-spacing: 0.3px;
+}
+.af-panel-close {
+  width: 24px; height: 24px; border-radius: 4px;
+  background: rgba(255,255,255,0.1); border: none; cursor: pointer;
+  color: rgba(255,255,255,0.6);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s; flex-shrink: 0;
+}
+.af-panel-close:hover { background: rgba(255,255,255,0.2); color: white; }
+
+/* Panel tabs */
+.af-panel-tabs {
+  display: flex; border-bottom: 1px solid var(--panel-border);
+  flex-shrink: 0; background: white;
+}
+.af-tab {
+  flex: 1; padding: 9px 6px;
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+  background: none; border: none; cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+.af-tab:hover { color: var(--purple); }
+.af-tab.active { color: var(--purple); border-bottom-color: var(--purple); }
+
+/* Panel content */
+.af-panel-body { flex: 1; overflow-y: auto; }
+.af-panel-section { display: none; }
+.af-panel-section.active { display: block; }
+
+/* Briefing rows */
+.af-row {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--panel-border);
+  cursor: default; transition: background 0.12s;
+}
+.af-row:last-child { border-bottom: none; }
+.af-row:hover { background: #F3F2FF; }
+.af-row-icon {
+  width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; flex-shrink: 0; margin-top: 1px;
+}
+.af-row-content { flex: 1; min-width: 0; }
+.af-row-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-3); margin-bottom: 2px; }
+.af-row-text { font-size: 12px; color: var(--text); line-height: 1.45; }
+.af-row-text em { font-style: normal; color: var(--purple); font-weight: 600; }
+.af-status {
+  font-size: 9px; font-weight: 700; padding: 2px 7px;
+  border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px;
+  flex-shrink: 0; margin-top: 2px; align-self: flex-start;
+  white-space: nowrap;
+}
+.s-live    { background: var(--green-light);  color: var(--green); }
+.s-pending { background: var(--amber-light);  color: var(--amber); }
+.s-closed  { background: #F0F0F0; color: #888; }
+.s-queued  { background: var(--blue-light);   color: var(--blue); }
+.s-high    { background: var(--purple-light); color: var(--purple); }
+
+/* Today summary tab */
+.af-today-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 14px; border-bottom: 1px solid var(--panel-border);
+  cursor: pointer; transition: background 0.12s;
+}
+.af-today-row:hover { background: #F5F4FF; }
+.af-today-visit-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.af-today-row-text { flex: 1; min-width: 0; }
+.af-today-name { font-size: 12px; font-weight: 600; color: var(--text); }
+.af-today-time { font-size: 11px; color: var(--text-3); }
+.af-today-status {
+  font-size: 9px; font-weight: 700; padding: 1px 7px;
+  border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0;
+}
+
+/* Panel quick actions */
+.af-panel-actions {
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--panel-border);
+  display: flex; flex-direction: column; gap: 6px;
+  flex-shrink: 0; background: white;
+}
+.af-actions-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  color: var(--text-3); margin-bottom: 2px;
+}
+.af-actions-row { display: flex; gap: 6px; flex-wrap: wrap; }
+.af-qa {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 11px; border-radius: 20px;
+  background: var(--panel-bg); border: 1.5px solid var(--panel-border);
+  font-size: 11px; font-weight: 600; color: var(--text-2);
+  cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.af-qa:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-light); }
+.af-qa.primary { background: var(--purple); color: white; border-color: var(--purple); }
+.af-qa.primary:hover { background: #6A58E0; border-color: #6A58E0; }
+.af-qa.done { background: var(--green-light); color: var(--green); border-color: var(--green); cursor: default; pointer-events: none; }
+
+/* ── Modals ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45); z-index: 500;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: white; border-radius: 12px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.22);
+  width: 100%; max-width: 540px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  animation: modal-in 0.18s ease;
+}
+@keyframes modal-in { from { opacity:0; transform: scale(0.96) translateY(8px); } to { opacity:1; transform: none; } }
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px; border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.modal-header-left { display: flex; align-items: center; gap: 10px; }
+.modal-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.modal-title { font-size: 14px; font-weight: 700; }
+.modal-subtitle { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.modal-close {
+  width: 28px; height: 28px; border-radius: 6px;
+  background: none; border: 1.5px solid var(--border);
+  cursor: pointer; color: var(--text-2);
+  display: flex; align-items: center; justify-content: center; font-size: 16px; line-height: 1;
+}
+.modal-close:hover { background: #F5F5F5; }
+.modal-fields { padding: 10px 18px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 7px; flex-shrink: 0; }
+.modal-field { display: flex; align-items: center; gap: 10px; }
+.modal-field-label { font-size: 12px; font-weight: 600; color: var(--text-3); width: 44px; flex-shrink: 0; }
+.modal-tag { display: inline-flex; align-items: center; gap: 5px; background: var(--purple-light); color: var(--purple); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+.modal-body { flex: 1; overflow-y: auto; padding: 14px 18px; }
+.modal-body-editable { font-size: 13px; line-height: 1.7; color: var(--text); outline: none; min-height: 120px; white-space: pre-wrap; font-family: 'Segoe UI', -apple-system, sans-serif; }
+.modal-compliance { padding: 7px 18px; background: #F7F7F5; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-2); display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.modal-footer { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.modal-footer-left { font-size: 11px; color: var(--text-3); }
+.modal-footer-right { display: flex; gap: 8px; }
+.btn { padding: 7px 16px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+.btn-ghost { background: none; border: 1.5px solid var(--border); color: var(--text-2); }
+.btn-ghost:hover { background: #F5F5F5; }
+.btn-purple { background: var(--purple); color: white; }
+.btn-purple:hover { background: #6A58E0; }
+.btn-purple:disabled { background: #B0A8F5; cursor: default; }
+.btn-blue { background: #0078D4; color: white; }
+.btn-blue:hover { background: #106EBE; }
+.btn-green { background: var(--green); color: white; }
+.btn-green:hover { background: #16A34A; }
+
+/* Content picker */
+.content-pick-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+.content-pick-item:last-child { border-bottom: none; }
+.cpi-check { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.cpi-check.on { background: var(--purple); border-color: var(--purple); }
+.cpi-check.on::after { content:''; width:8px; height:5px; border-left:2px solid white; border-bottom:2px solid white; transform:rotate(-45deg) translateY(-1px); display:block; }
+.cpi-icon { width: 30px; height: 30px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.cpi-info { flex: 1; }
+.cpi-title { font-size: 13px; font-weight: 600; }
+.cpi-meta { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.cpi-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; align-self: flex-start; }
+
+/* Toast */
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; border-radius: 10px; padding: 11px 18px; font-size: 13px; font-weight: 600; display: none; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); z-index: 1000; white-space: nowrap; }
+
+/* Teams post composer */
+.teams-post-composer { background: #F3F2FF; border-top: 2px solid var(--purple); overflow: hidden; display: none; flex-shrink: 0; }
+.teams-post-composer.open { display: block; }
+.tpc-header { padding: 8px 16px; background: var(--purple); font-size: 11px; font-weight: 700; color: white; display: flex; align-items: center; justify-content: space-between; }
+.tpc-close-btn { background: none; border: none; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 16px; line-height: 1; }
+.tpc-body { padding: 10px 16px 12px; }
+.tpc-textarea { width: 100%; border: 1px solid #C4BBFF; border-radius: 6px; padding: 8px 10px; font-size: 12px; line-height: 1.5; font-family: inherit; resize: none; outline: none; background: white; min-height: 64px; }
+.tpc-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.tpc-btn { padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; cursor: pointer; border: none; }
+.tpc-cancel { background: none; border: 1.5px solid #C4BBFF; color: var(--purple); }
+.tpc-post { background: var(--purple); color: white; }
+
+/* Outlook inline reply */
+.o-reply-strip { border-top: 2px solid #0078D4; background: white; flex-shrink: 0; display: none; flex-direction: column; }
+.o-reply-strip.open { display: flex; }
+.o-reply-strip-header { padding: 8px 16px; background: #EEF3FB; display: flex; align-items: center; justify-content: space-between; font-size: 12px; font-weight: 700; color: #0078D4; border-bottom: 1px solid #D0E4F7; }
+.o-reply-strip-close { background: none; border: none; color: #0078D4; cursor: pointer; font-size: 16px; line-height: 1; }
+.o-reply-strip-body { padding: 10px 16px; }
+.o-reply-textarea { width: 100%; border: 1px solid #D0E4F7; border-radius: 4px; padding: 8px 10px; font-size: 12px; line-height: 1.6; font-family: inherit; resize: none; outline: none; min-height: 90px; }
+.o-reply-strip-footer { padding: 8px 16px 12px; display: flex; gap: 8px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- App switcher -->
+<div class="app-switcher">
+  <div class="app-tab active" id="tab-teams" onclick="switchApp('teams')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="11" height="11" rx="2" fill="#6264A7"/><rect x="11" y="10" width="11" height="11" rx="2" fill="#4B4B96"/><circle cx="17" cy="6" r="3" fill="#6264A7"/></svg>
+    Microsoft Teams
+  </div>
+  <div class="app-tab" id="tab-outlook" onclick="switchApp('outlook')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" fill="#0078D4"/><path d="M2 8l10 6 10-6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Outlook
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     TEAMS
+     ══════════════════════════════════════════════════════════ -->
+<div class="shell teams-shell active" id="shell-teams">
+
+  <!-- Top bar -->
+  <div class="t-topbar">
+    <div class="t-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="11" height="11" rx="2" fill="rgba(255,255,255,0.9)"/><rect x="11" y="10" width="11" height="11" rx="2" fill="rgba(255,255,255,0.6)"/><circle cx="17" cy="6" r="3" fill="rgba(255,255,255,0.9)"/></svg>
+      Immunexis Life Sciences
+    </div>
+    <div class="t-search">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search
+    </div>
+    <div class="t-topbar-actions">
+      <button class="t-icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 10l5-5-5-5"/><path d="M4 20v-4a4 4 0 0 1 4-4h12"/></svg></button>
+      <button class="t-icon-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg></button>
+      <div class="t-avatar">EC</div>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="t-body">
+
+    <!-- Left nav -->
+    <nav class="t-nav">
+      <div class="t-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <span>Activity</span>
+        <span class="t-nav-badge">3</span>
+      </div>
+      <div class="t-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <span>Chat</span>
+      </div>
+      <div class="t-nav-item active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        <span>Teams</span>
+      </div>
+      <div class="t-nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span>Calendar</span>
+      </div>
+      <div class="t-nav-spacer"></div>
+      <div class="t-nav-af" id="t-nav-af" onclick="togglePanel('teams')" title="Agentforce Life Sciences">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+    </nav>
+
+    <!-- Channels -->
+    <div class="t-channels">
+      <div class="t-team-header">
+        <div class="t-team-icon">IM</div>
+        Immunexis — NE
+      </div>
+      <div class="t-section-label">Channels</div>
+      <div class="t-channel">&#35; General</div>
+      <div class="t-channel active">&#35; NE Territory <span class="t-channel-unread">2</span></div>
+      <div class="t-channel">&#35; Field Visits</div>
+      <div class="t-channel">&#35; Medical Affairs</div>
+      <div class="t-channel">&#35; Content Library</div>
+      <div class="t-section-label" style="margin-top:8px">Direct</div>
+      <div class="t-channel">&#128100; Raj Patel</div>
+      <div class="t-channel">&#128100; Sarah Okafor (MSL)</div>
+    </div>
+
+    <!-- Main chat area -->
+    <div class="t-main">
+      <div class="t-channel-header">
+        <span style="color:#888;font-size:15px">#</span>
+        <span class="t-channel-header-name">NE Territory</span>
+        <span class="t-channel-header-desc">Immunexis field team — Northeast region</span>
+        <div class="t-header-actions">
+          <button class="t-h-btn af-btn" onclick="togglePanel('teams')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Agentforce
+          </button>
+          <button class="t-h-btn">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            Search
+          </button>
+        </div>
+      </div>
+
+      <div class="t-messages">
+        <div class="t-date-divider">Yesterday</div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#0078D4">RP</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header">
+              <span class="t-msg-name">Raj Patel</span>
+              <span class="t-msg-role">Regional Manager</span>
+              <span class="t-msg-time">3:47 PM</span>
+            </div>
+            <div class="t-msg-text">Team &mdash; reminder that Morita @ Partners Healthcare is confirmed for tomorrow morning. Priority visit. <span class="mention">@Evan</span> make sure you&rsquo;ve reviewed the Phase III deck and the EU submission update before 8am. Agentforce should have a briefing ready.</div>
+          </div>
+        </div>
+
+        <div class="t-date-divider">Today</div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#6264A7">EC</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header">
+              <span class="t-msg-name">Evan Casto</span>
+              <span class="t-msg-role">Field Rep</span>
+              <span class="t-msg-time">7:54 AM</span>
+            </div>
+            <div class="t-msg-text">Ready. Just pulled the Agentforce briefing on Morita &mdash; he has an open medical inquiry on mechanism depth, MSL routing already initiated. Also flagging the competitor AE he mentioned last quarter so it&rsquo;s on record.</div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#2D1B69;border-radius:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div class="t-msg-body">
+            <div class="t-msg-header">
+              <span class="t-msg-name" style="color:#7B68EE;">Agentforce</span>
+              <span class="t-msg-role" style="background:#F0EEFF;color:#7B68EE;">Life Sciences</span>
+              <span class="t-msg-time">7:55 AM</span>
+            </div>
+            <div class="t-msg-text">Account briefing ready for today&rsquo;s visit.</div>
+            <div class="af-chat-card" onclick="togglePanel('teams')">
+              <div class="af-card-header">
+                <span class="af-card-badge">Agentforce</span>
+                <span class="af-card-title">Dr. Aaron Morita &mdash; Partners Healthcare</span>
+              </div>
+              <div class="af-card-rows">
+                <div class="af-card-row"><span class="dot" style="background:#7B68EE"></span>Open medical inquiry: MOA depth &mdash; MSL routed</div>
+                <div class="af-card-row"><span class="dot" style="background:#F59E0B"></span>Immunexis Phase III data package queued for delivery</div>
+                <div class="af-card-row"><span class="dot" style="background:#22C55E"></span>Engagement: High &mdash; 3 clinical visits this quarter</div>
+                <div class="af-card-row"><span class="dot" style="background:#EF4444"></span>Competitor AE: Documented &amp; routed to PV</div>
+              </div>
+              <div class="af-card-cta">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Open full briefing in Agentforce panel &#8594;
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#107C41">SO</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header">
+              <span class="t-msg-name">Sarah Okafor</span>
+              <span class="t-msg-role">MSL &mdash; NE</span>
+              <span class="t-msg-time">9:12 AM</span>
+            </div>
+            <div class="t-msg-text">Got the routing Evan. I&rsquo;ll pick up the MOA inquiry. Expect my call to Dr. Morita by Wednesday EOD at latest.</div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#6264A7">EC</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header">
+              <span class="t-msg-name">Evan Casto</span>
+              <span class="t-msg-role">Field Rep</span>
+              <span class="t-msg-time">9:41 AM</span>
+            </div>
+            <div class="t-msg-text">Visit done &#10003; Phase III discussion went well &mdash; Morita is very engaged on the EU timeline and asked about patient population stratification in the KEYNOTE data. Flagged a competitor AE. Follow-up email drafted and sent via approved channel. Agentforce logged everything.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Teams post composer -->
+      <div class="teams-post-composer" id="teams-composer">
+        <div class="tpc-header">
+          <span>&#129504; Agentforce &mdash; Post update to #NE Territory</span>
+          <button class="tpc-close-btn" onclick="toggleTeamsComposer()">&times;</button>
+        </div>
+        <div class="tpc-body">
+          <textarea class="tpc-textarea" id="tpc-text">Visit complete ✓ Dr. Aaron Morita (Partners Healthcare) — Phase III data discussion, EU timeline flagged. Follow-up email sent via approved channel. MSL routing initiated for MOA inquiry. Immunexis Phase III data package queued for delivery within 48hrs.</textarea>
+          <div class="tpc-actions">
+            <button class="tpc-btn tpc-cancel" onclick="toggleTeamsComposer()">Cancel</button>
+            <button class="tpc-btn tpc-post" onclick="postToChannel()">Post</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-input">
+        <div class="t-input-box">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          <span>Reply to NE Territory&hellip;</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agentforce panel -->
+    <div class="af-panel" id="af-panel-teams">
+      <div class="af-panel-header">
+        <div class="af-panel-title-row">
+          <div class="af-panel-badge-row">
+            <span class="af-badge"><span class="af-badge-dot"></span>Agentforce</span>
+            <span class="af-compliant">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Compliant
+            </span>
+          </div>
+          <button class="af-panel-close" onclick="togglePanel('teams')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="af-panel-name">Dr. Aaron Morita</div>
+        <div class="af-panel-sub">
+          Partners Healthcare
+          <span class="af-sub-dot"></span>
+          Oncology
+          <span class="af-sub-dot"></span>
+          Life Sciences Cloud
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="af-panel-tabs">
+        <button class="af-tab active" onclick="switchTab('briefing')">Briefing</button>
+        <button class="af-tab" onclick="switchTab('today')">Today</button>
+        <button class="af-tab" onclick="switchTab('content')">Content</button>
+      </div>
+
+      <!-- Briefing tab -->
+      <div class="af-panel-body">
+        <div class="af-panel-section active" id="tab-briefing">
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#EFF6FF">&#128221;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Last Interaction</div>
+              <div class="af-row-text">Today&rsquo;s visit &mdash; <em>Phase III data discussion</em>, EU approval timeline, competitor AE flag</div>
+            </div>
+            <span class="af-status s-live">Today</span>
+          </div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#F0EEFF">&#129504;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Open Medical Inquiry</div>
+              <div class="af-row-text"><em>Mechanism of action depth</em> &mdash; MSL routing initiated. SLA: <em>48&ndash;72 hrs</em></div>
+            </div>
+            <span class="af-status s-pending">Pending</span>
+          </div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#FDF3E8">&#127979;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Clinical Education</div>
+              <div class="af-row-text">Peer exchange flagged &mdash; CE team notified, <em>awaiting scheduling</em></div>
+            </div>
+            <span class="af-status s-pending">In Progress</span>
+          </div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#F0FDF4">&#128230;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Approved Content</div>
+              <div class="af-row-text"><em>Immunexis Phase III</em> + EU regulatory summary &mdash; delivery within 48 hrs</div>
+            </div>
+            <span class="af-status s-queued">Queued</span>
+          </div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#FEF2F2">&#9888;&#65039;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Pharmacovigilance</div>
+              <div class="af-row-text">Competitor AE documented and routed &mdash; no action required</div>
+            </div>
+            <span class="af-status s-closed">Closed</span>
+          </div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#FFFBEB">&#9889;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Engagement Score</div>
+              <div class="af-row-text"><em>High</em> &mdash; 3 visits this quarter, all clinical. Strong Immunexis interest.</div>
+            </div>
+            <span class="af-status s-high">High</span>
+          </div>
+        </div>
+
+        <!-- Today tab -->
+        <div class="af-panel-section" id="tab-today">
+          <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#9B9898;">Today&rsquo;s Schedule</div>
+          <div class="af-today-row">
+            <div class="af-today-visit-dot" style="background:#888"></div>
+            <div class="af-today-row-text">
+              <div class="af-today-name">Aaron Morita, MD</div>
+              <div class="af-today-time">8:15 &ndash; 8:55 AM &middot; Partners Healthcare</div>
+            </div>
+            <span class="af-today-status" style="background:#F0F0F0;color:#888;">Done</span>
+          </div>
+          <div class="af-today-row">
+            <div class="af-today-visit-dot" style="background:#888"></div>
+            <div class="af-today-row-text">
+              <div class="af-today-name">Robert Nakamura, MD</div>
+              <div class="af-today-time">9:10 &ndash; 9:40 AM &middot; Endocrinology</div>
+            </div>
+            <span class="af-today-status" style="background:#F0F0F0;color:#888;">Done</span>
+          </div>
+          <div class="af-today-row">
+            <div class="af-today-visit-dot" style="background:#7B68EE"></div>
+            <div class="af-today-row-text">
+              <div class="af-today-name">Christine O&rsquo;Brien, MD</div>
+              <div class="af-today-time">9:45 &ndash; 10:15 AM &middot; Internal Med</div>
+            </div>
+            <span class="af-today-status" style="background:#F0EEFF;color:#7B68EE;">Up next</span>
+          </div>
+          <div class="af-today-row">
+            <div class="af-today-visit-dot" style="background:#3B82F6"></div>
+            <div class="af-today-row-text">
+              <div class="af-today-name">Michelle Reyes, NP</div>
+              <div class="af-today-time">1:00 &ndash; 1:30 PM &middot; Primary Care</div>
+            </div>
+            <span class="af-today-status" style="background:#EFF6FF;color:#3B82F6;">Upcoming</span>
+          </div>
+          <div class="af-today-row">
+            <div class="af-today-visit-dot" style="background:#3B82F6"></div>
+            <div class="af-today-row-text">
+              <div class="af-today-name">Nina Chandra, MD</div>
+              <div class="af-today-time">2:05 &ndash; 2:35 PM &middot; Cardiology</div>
+            </div>
+            <span class="af-today-status" style="background:#EFF6FF;color:#3B82F6;">Upcoming</span>
+          </div>
+        </div>
+
+        <!-- Content tab -->
+        <div class="af-panel-section" id="tab-content">
+          <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#9B9898;">Approved for Dr. Morita</div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#EFF6FF">&#128196;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Clinical Data</div>
+              <div class="af-row-text"><em>Immunexis Phase III</em> data package &mdash; EU regulatory submission summary</div>
+            </div>
+            <span class="af-status s-queued">Queued</span>
+          </div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#F0FDF4">&#128203;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Visit Summary</div>
+              <div class="af-row-text">Today&rsquo;s visit notes &mdash; auto-generated, pending your review</div>
+            </div>
+            <span class="af-status s-pending">Draft</span>
+          </div>
+          <div class="af-row">
+            <div class="af-row-icon" style="background:#FFFBEB">&#9993;&#65039;</div>
+            <div class="af-row-content">
+              <div class="af-row-label">Follow-up Email</div>
+              <div class="af-row-text">Sent via approved channel &mdash; Phase III next steps, MSL intro, CE flagged</div>
+            </div>
+            <span class="af-status s-live">Sent</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick actions — Teams panel -->
+      <div class="af-panel-actions">
+        <div class="af-actions-label">Actions</div>
+        <div class="af-actions-row">
+          <button class="af-qa primary" onclick="openModal('email')">&#9993;&#65039; Email Dr. Morita</button>
+          <button class="af-qa" onclick="openModal('content')">&#128230; Send Immunexis data</button>
+        </div>
+        <div class="af-actions-row">
+          <button class="af-qa" id="teams-post-btn" onclick="toggleTeamsComposer()">&#128172; Post to channel</button>
+          <button class="af-qa" onclick="openModal('notes')">&#128221; Log visit notes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teams post composer (inside chat area, injected via JS) -->
+
+    <!-- Right app bar -->
+    <div class="t-appbar">
+      <div class="t-appbar-af" id="t-appbar-af" onclick="togglePanel('teams')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.9)" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      </div>
+    </div>
+
+  </div><!-- /t-body -->
+</div><!-- /teams shell -->
+
+<!-- ══════════════════════════════════════════════════════════
+     OUTLOOK
+     ══════════════════════════════════════════════════════════ -->
+<div class="shell outlook-shell" id="shell-outlook">
+
+  <!-- Top bar -->
+  <div class="o-topbar">
+    <div class="o-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" fill="rgba(255,255,255,0.9)"/><path d="M2 8l10 6 10-6" stroke="#0078D4" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Outlook
+    </div>
+    <button class="o-nav-pill active">New mail</button>
+    <button class="o-nav-pill">Reply</button>
+    <button class="o-nav-pill">Forward</button>
+    <div class="o-topbar-right">
+      <div class="t-avatar" style="background:#0078D4">EC</div>
+    </div>
+  </div>
+
+  <!-- Ribbon -->
+  <div class="o-ribbon">
+    <button class="o-ribbon-btn">
+      <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="7" height="7" rx="1" fill="#0078D4"/><rect x="14" y="3" width="7" height="7" rx="1" fill="#0078D4"/><rect x="3" y="14" width="7" height="7" rx="1" fill="#0078D4"/><rect x="14" y="14" width="7" height="7" rx="1" fill="#0078D4"/></svg>
+      Archive
+    </button>
+    <button class="o-ribbon-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2" stroke-linecap="round"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>
+      Reply
+    </button>
+    <button class="o-ribbon-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2" stroke-linecap="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      Forward
+    </button>
+    <div class="o-ribbon-sep"></div>
+    <button class="o-ribbon-btn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6"/></svg>
+      Delete
+    </button>
+    <button class="o-af-btn" onclick="togglePanel('outlook')">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Agentforce Life Sciences
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div class="o-body">
+
+    <!-- Folder tree -->
+    <div class="o-folders">
+      <div class="o-folder active">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
+        Inbox
+        <span class="o-folder-count">4</span>
+      </div>
+      <div class="o-folder">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"/><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/></svg>
+        Sent
+      </div>
+      <div class="o-folder">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></svg>
+        Deleted
+      </div>
+      <div class="o-folder" style="padding-left:20px;font-size:11px;margin-top:8px;color:#888;">&#128193; HCP Visits</div>
+      <div class="o-folder" style="padding-left:20px;font-size:11px;color:#888;">&#128193; Medical Affairs</div>
+      <div class="o-folder" style="padding-left:20px;font-size:11px;color:#888;">&#128193; Compliance</div>
+    </div>
+
+    <!-- Email list -->
+    <div class="o-email-list">
+      <div class="o-email-list-header">
+        Inbox
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </div>
+      <div class="o-email-item active">
+        <div class="o-email-sender">
+          <span>Dr. Aaron Morita</span>
+          <span class="o-email-time">9:58 AM</span>
+        </div>
+        <div class="o-email-subject">Re: Immunexis Phase III — follow-up</div>
+        <div class="o-email-preview">Thank you Evan — very helpful. I&rsquo;d like to review the EU submission data before my next clinic...</div>
+      </div>
+      <div class="o-email-item unread">
+        <div class="o-email-sender">
+          <span style="display:flex;align-items:center;gap:6px;"><span class="o-unread-dot"></span>Sarah Okafor (MSL)</span>
+          <span class="o-email-time">9:12 AM</span>
+        </div>
+        <div class="o-email-subject">MSL routing — Dr. Morita MOA inquiry</div>
+        <div class="o-email-preview">Hi Evan, confirming I&rsquo;ve picked up the mechanism of action inquiry for Morita...</div>
+      </div>
+      <div class="o-email-item unread">
+        <div class="o-email-sender">
+          <span style="display:flex;align-items:center;gap:6px;"><span class="o-unread-dot"></span>Raj Patel</span>
+          <span class="o-email-time">8:02 AM</span>
+        </div>
+        <div class="o-email-subject">Today&rsquo;s territory &mdash; priority visits</div>
+        <div class="o-email-preview">Good morning team. Morita is the priority today — make sure Agentforce briefing is reviewed...</div>
+      </div>
+      <div class="o-email-item">
+        <div class="o-email-sender">
+          <span>Compliance Team</span>
+          <span class="o-email-time">Yesterday</span>
+        </div>
+        <div class="o-email-subject">PV log confirmed — competitor AE ref #2024-NE-0817</div>
+        <div class="o-email-preview">This confirms receipt of your pharmacovigilance report. No further action required...</div>
+      </div>
+    </div>
+
+    <!-- Reading pane -->
+    <div class="o-reading">
+      <div class="o-email-header">
+        <div class="o-email-subject-line">Re: Immunexis Phase III &mdash; follow-up next steps</div>
+        <div class="o-email-from">
+          <div class="o-from-avatar">AM</div>
+          <div>
+            <div class="o-from-name">Dr. Aaron Morita <span style="font-weight:400;color:#888;">&lt;a.morita@partnershealthcare.org&gt;</span></div>
+            <div class="o-from-email">To: Evan Casto &middot; CC: MSL Northeast</div>
+          </div>
+          <div style="margin-left:auto;">
+            <div class="o-email-meta">Today, 9:58 AM</div>
+          </div>
+        </div>
+      </div>
+      <div class="o-email-body">
+        <p>Hi Evan,</p>
+        <p>Thank you for the thorough follow-up &mdash; very much appreciated. The conversation this morning was exactly the kind of clinical dialogue I find valuable, and I&rsquo;m glad the Phase III data is coming through the approved channel.</p>
+        <p>A few thoughts from my end:</p>
+        <ol>
+          <li><strong>EU submission data</strong> &mdash; I&rsquo;d like to review the patient population stratification before my next tumour board. If the package includes the subgroup analysis by PD-L1 expression, please flag that when you send it.</li>
+          <li><strong>MSL call</strong> &mdash; looking forward to connecting with Sarah. The mechanism question is particularly relevant given a patient case I&rsquo;m managing currently.</li>
+          <li><strong>Peer exchange</strong> &mdash; yes, I&rsquo;m interested. Prefer a virtual format if possible, and happy to host if useful for the group.</li>
+        </ol>
+        <p>Thanks again Evan. Good work today.</p>
+        <p>Best,<br/><strong>Aaron Morita, MD</strong><br/>Oncology &middot; Partners Healthcare</p>
+      </div>
+      <div class="o-email-actions">
+        <button class="o-action-btn primary">&#8617; Reply</button>
+        <button class="o-action-btn">&#8618; Forward</button>
+        <button class="o-action-btn">&#128203; Log to Salesforce</button>
+      </div>
+    </div>
+
+    <!-- Agentforce panel (Outlook) -->
+    <div class="af-panel" id="af-panel-outlook">
+      <div class="af-panel-header">
+        <div class="af-panel-title-row">
+          <div class="af-panel-badge-row">
+            <span class="af-badge"><span class="af-badge-dot"></span>Agentforce</span>
+            <span class="af-compliant">
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Compliant
+            </span>
+          </div>
+          <button class="af-panel-close" onclick="togglePanel('outlook')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="af-panel-name">Dr. Aaron Morita</div>
+        <div class="af-panel-sub">
+          Partners Healthcare
+          <span class="af-sub-dot"></span>
+          Oncology
+          <span class="af-sub-dot"></span>
+          Life Sciences Cloud
+        </div>
+      </div>
+      <div class="af-panel-tabs">
+        <button class="af-tab active" onclick="switchTab('briefing')">Briefing</button>
+        <button class="af-tab" onclick="switchTab('today')">Today</button>
+        <button class="af-tab" onclick="switchTab('content')">Content</button>
+      </div>
+      <div class="af-panel-body">
+        <div class="af-panel-section active" id="o-tab-briefing">
+          <div class="af-row"><div class="af-row-icon" style="background:#EFF6FF">&#128221;</div><div class="af-row-content"><div class="af-row-label">Last Interaction</div><div class="af-row-text">Today&rsquo;s visit &mdash; <em>Phase III data discussion</em>, EU approval timeline, competitor AE flag</div></div><span class="af-status s-live">Today</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#F0EEFF">&#129504;</div><div class="af-row-content"><div class="af-row-label">Open Medical Inquiry</div><div class="af-row-text"><em>Mechanism of action depth</em> &mdash; MSL routing initiated. SLA: <em>48&ndash;72 hrs</em></div></div><span class="af-status s-pending">Pending</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#FDF3E8">&#127979;</div><div class="af-row-content"><div class="af-row-label">Clinical Education</div><div class="af-row-text">Peer exchange flagged &mdash; CE team notified, <em>awaiting scheduling</em></div></div><span class="af-status s-pending">In Progress</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#F0FDF4">&#128230;</div><div class="af-row-content"><div class="af-row-label">Approved Content</div><div class="af-row-text"><em>Immunexis Phase III</em> + EU regulatory summary &mdash; delivery within 48 hrs</div></div><span class="af-status s-queued">Queued</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#FEF2F2">&#9888;&#65039;</div><div class="af-row-content"><div class="af-row-label">Pharmacovigilance</div><div class="af-row-text">Competitor AE documented and routed &mdash; no action required</div></div><span class="af-status s-closed">Closed</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#FFFBEB">&#9889;</div><div class="af-row-content"><div class="af-row-label">Engagement Score</div><div class="af-row-text"><em>High</em> &mdash; 3 visits this quarter, all clinical. Strong Immunexis interest.</div></div><span class="af-status s-high">High</span></div>
+        </div>
+        <div class="af-panel-section" id="o-tab-today">
+          <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#9B9898;">Today&rsquo;s Schedule</div>
+          <div class="af-today-row"><div class="af-today-visit-dot" style="background:#888"></div><div class="af-today-row-text"><div class="af-today-name">Aaron Morita, MD</div><div class="af-today-time">8:15 &ndash; 8:55 AM &middot; Partners Healthcare</div></div><span class="af-today-status" style="background:#F0F0F0;color:#888;">Done</span></div>
+          <div class="af-today-row"><div class="af-today-visit-dot" style="background:#888"></div><div class="af-today-row-text"><div class="af-today-name">Robert Nakamura, MD</div><div class="af-today-time">9:10 &ndash; 9:40 AM</div></div><span class="af-today-status" style="background:#F0F0F0;color:#888;">Done</span></div>
+          <div class="af-today-row"><div class="af-today-visit-dot" style="background:#7B68EE"></div><div class="af-today-row-text"><div class="af-today-name">Christine O&rsquo;Brien, MD</div><div class="af-today-time">9:45 &ndash; 10:15 AM</div></div><span class="af-today-status" style="background:#F0EEFF;color:#7B68EE;">Up next</span></div>
+          <div class="af-today-row"><div class="af-today-visit-dot" style="background:#3B82F6"></div><div class="af-today-row-text"><div class="af-today-name">Michelle Reyes, NP</div><div class="af-today-time">1:00 &ndash; 1:30 PM</div></div><span class="af-today-status" style="background:#EFF6FF;color:#3B82F6;">Upcoming</span></div>
+        </div>
+        <div class="af-panel-section" id="o-tab-content">
+          <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#9B9898;">Suggested for this email</div>
+          <div class="af-row"><div class="af-row-icon" style="background:#EFF6FF">&#128196;</div><div class="af-row-content"><div class="af-row-label">Immunexis Phase III</div><div class="af-row-text">EU regulatory submission summary incl. subgroup analysis &mdash; <em>PD-L1 stratification available</em></div></div><span class="af-status s-queued">Ready</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#F0FDF4">&#9993;&#65039;</div><div class="af-row-content"><div class="af-row-label">Suggested Reply</div><div class="af-row-text">Acknowledge subgroup request, confirm MSL call timing, flag virtual CE format preference</div></div><span class="af-status s-pending">Draft</span></div>
+        </div>
+      </div>
+      <!-- Quick actions — Outlook panel -->
+      <div class="af-panel-actions">
+        <div class="af-actions-label">Actions</div>
+        <div class="af-actions-row">
+          <button class="af-qa primary" onclick="openOutlookReply()">&#8617; Reply (AI-assisted)</button>
+          <button class="af-qa" onclick="openModal('content')">&#128230; Send content</button>
+        </div>
+        <div class="af-actions-row">
+          <button class="af-qa" onclick="logToSalesforce()">&#9729;&#65039; Log to Salesforce</button>
+          <button class="af-qa" onclick="openModal('notes')">&#128221; Visit notes</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /o-body -->
+
+  <!-- Outlook inline reply strip -->
+  <div class="o-reply-strip" id="o-reply-strip">
+    <div class="o-reply-strip-header">
+      <span>&#129504; Agentforce-assisted reply &mdash; Dr. Aaron Morita</span>
+      <button class="o-reply-strip-close" onclick="closeOutlookReply()">&times;</button>
+    </div>
+    <div class="o-reply-strip-body">
+      <textarea class="o-reply-textarea" id="o-reply-text">Hi Dr. Morita,
+
+Thank you for the thoughtful reply. Noted on all three points:
+
+1. I'll flag the PD-L1 subgroup analysis specifically when the Phase III package is sent — expect it within 48 hours via the approved channel.
+
+2. Sarah Okafor (MSL) will be in touch by Wednesday EOD. I've passed along the context on your current patient case so she can come prepared.
+
+3. Virtual format noted — I'll relay that preference to the CE team when they reach out to schedule.
+
+Really appreciate your engagement on this, Dr. Morita. Looking forward to continuing the conversation.
+
+Best regards,
+Evan Casto
+Immunexis — Northeast Territory</textarea>
+    </div>
+    <div class="o-reply-strip-footer">
+      <button class="btn btn-blue" id="o-send-btn" onclick="sendOutlookReply()">&#10148; Send</button>
+      <button class="btn btn-ghost" onclick="closeOutlookReply()">Discard</button>
+      <span style="font-size:11px;color:#888;margin-left:6px;">MLR approved &middot; Auto-logged to Salesforce on send</span>
+    </div>
+  </div>
+</div><!-- /outlook shell -->
+
+<!-- ══ MODALS ══════════════════════════════════════════════════ -->
+
+<!-- Email compose -->
+<div class="modal-overlay" id="modal-email" onclick="if(event.target===this)closeModal('email')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon" style="background:#F0EEFF;">&#9993;&#65039;</div>
+        <div>
+          <div class="modal-title">Follow-up Email</div>
+          <div class="modal-subtitle">Agentforce Life Sciences &middot; Approved channel</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('email')">&times;</button>
+    </div>
+    <div class="modal-fields">
+      <div class="modal-field">
+        <span class="modal-field-label">To</span>
+        <span class="modal-tag">Dr. Aaron Morita &lt;a.morita@partnershealthcare.org&gt;</span>
+      </div>
+      <div class="modal-field">
+        <span class="modal-field-label">CC</span>
+        <span style="font-size:12px;color:var(--text-3)">MSL Team &lt;msl-northeast@immunexis.com&gt;</span>
+      </div>
+      <div class="modal-field">
+        <span class="modal-field-label">Re</span>
+        <span style="font-size:12px;font-weight:500;">Follow-up: Immunexis Phase III data &amp; next steps &mdash; Partners Healthcare visit</span>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div class="modal-body-editable" contenteditable="true">Dear Dr. Morita,
+
+Thank you for your time today &#8212; it was a really valuable conversation and I appreciate the depth of your questions around the Phase III data and EU approval timeline.
+
+I wanted to follow up with a few confirmed next steps:
+
+1. Approved Clinical Content
+I&#39;ll have the Phase III data package &#8212; including the EU regulatory submission summary &#8212; sent to you via our approved content channel within 48 hours. If there&#39;s a specific endpoint or patient population you&#39;d like prioritised, just let me know.
+
+2. Medical Inquiry &#8212; MSL Follow-Up
+Given the clinical depth of your questions, I&#39;ve connected you directly with our Medical Science Liaison team. You can expect a call from them within the next 2&#8211;3 business days to go deeper on the mechanism data and any outstanding evidence gaps.
+
+3. Clinical Education Programme
+Our regional Clinical Education team has availability for a peer exchange session next month. I&#39;ve flagged your interest and they&#39;ll be in touch shortly to align on format and timing.
+
+4. Adverse Event Note
+The patient experience with the competitor product you mentioned has been logged appropriately through our pharmacovigilance process &#8212; no action needed on your end, but I wanted you to know that&#39;s been handled.
+
+Looking forward to continuing the conversation. Please don&#39;t hesitate to reach out directly if anything comes up in the meantime.
+
+Best regards,
+Evan Casto
+Immunexis &#8212; Northeast Territory</div>
+    </div>
+    <div class="modal-compliance">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      MLR approved template &middot; Immunexis compliance v2.4 &middot; Auto-logged to Salesforce on send
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="email-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('email')">Discard</button>
+        <button class="btn btn-purple" id="email-send-btn" onclick="sendEmail()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send via Approved Channel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Content delivery -->
+<div class="modal-overlay" id="modal-content" onclick="if(event.target===this)closeModal('content')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon" style="background:#F0FDF4;">&#128230;</div>
+        <div>
+          <div class="modal-title">Send Approved Content</div>
+          <div class="modal-subtitle">Delivery via approved channel &middot; Dr. Aaron Morita</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('content')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:8px;">Select content to send</div>
+      <div class="content-pick-item" onclick="toggleCpi(this)">
+        <div class="cpi-check on"></div>
+        <div class="cpi-icon" style="background:#EFF6FF;">&#128196;</div>
+        <div class="cpi-info">
+          <div class="cpi-title">Immunexis Phase III Data Package</div>
+          <div class="cpi-meta">Full trial data &middot; MLR approved &middot; 4.2 MB PDF</div>
+        </div>
+        <span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6;">Approved</span>
+      </div>
+      <div class="content-pick-item" onclick="toggleCpi(this)">
+        <div class="cpi-check on"></div>
+        <div class="cpi-icon" style="background:#F0EEFF;">&#128196;</div>
+        <div class="cpi-info">
+          <div class="cpi-title">EU Regulatory Submission Summary</div>
+          <div class="cpi-meta">EMA filing overview &middot; MLR approved &middot; 1.8 MB PDF</div>
+        </div>
+        <span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6;">Approved</span>
+      </div>
+      <div class="content-pick-item" onclick="toggleCpi(this)">
+        <div class="cpi-check"></div>
+        <div class="cpi-icon" style="background:#FFFBEB;">&#128202;</div>
+        <div class="cpi-info">
+          <div class="cpi-title">PD-L1 Subgroup Analysis Slides</div>
+          <div class="cpi-meta">Patient stratification data &middot; MLR approved &middot; 2.1 MB PPTX</div>
+        </div>
+        <span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6;">Approved</span>
+      </div>
+      <div class="content-pick-item" onclick="toggleCpi(this)">
+        <div class="cpi-check"></div>
+        <div class="cpi-icon" style="background:#F0FDF4;">&#127891;</div>
+        <div class="cpi-info">
+          <div class="cpi-title">Peer Exchange Programme Overview</div>
+          <div class="cpi-meta">CE programme details &middot; MLR approved &middot; 0.4 MB PDF</div>
+        </div>
+        <span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6;">Approved</span>
+      </div>
+      <div style="margin-top:14px;padding:10px 12px;background:#F7F6F4;border-radius:8px;font-size:12px;color:var(--text-2);">
+        &#9729;&#65039; Will be logged to Dr. Morita&rsquo;s contact record in Salesforce automatically on delivery.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="content-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('content')">Cancel</button>
+        <button class="btn btn-green" id="content-send-btn" onclick="sendContent()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Deliver via Approved Channel
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Visit notes -->
+<div class="modal-overlay" id="modal-notes" onclick="if(event.target===this)closeModal('notes')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div class="modal-icon" style="background:#FDF3E8;">&#128221;</div>
+        <div>
+          <div class="modal-title">Log Visit Notes</div>
+          <div class="modal-subtitle">Dr. Aaron Morita &middot; Partners Healthcare &middot; Today</div>
+        </div>
+      </div>
+      <button class="modal-close" onclick="closeModal('notes')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:8px;">&#129504; Agentforce-drafted summary &mdash; edit before saving</div>
+      <textarea id="notes-text" style="width:100%;border:1px solid var(--border);border-radius:8px;padding:12px;font-size:13px;line-height:1.6;font-family:inherit;resize:none;outline:none;min-height:180px;">Visit date: Today, 8:15–8:55 AM
+Location: Partners Healthcare, Oncology Dept.
+HCP: Dr. Aaron Morita, MD (Oncology)
+
+Discussion summary:
+- Reviewed Immunexis Phase III efficacy data. Dr. Morita asked specific questions re: EU approval timeline and EMA submission status.
+- Strong clinical interest in PD-L1 subgroup stratification — requested this data be prioritised in content delivery.
+- Open medical inquiry raised: mechanism of action depth. MSL routing initiated.
+- Competitor adverse event mentioned by HCP — documented and routed to pharmacovigilance.
+- Clinical education interest confirmed: virtual peer exchange preferred.
+
+Next steps logged:
+1. Phase III data package + EU regulatory summary → approved channel, 48hrs
+2. MSL (Sarah Okafor) to follow up on MOA inquiry by Wednesday
+3. CE team notified of peer exchange interest
+4. PV log closed — no action required
+
+Engagement level: High
+Sample drop: Pending (logged separately)</textarea>
+    </div>
+    <div class="modal-compliance">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Will sync to Salesforce &middot; Auto-attached to Dr. Morita contact record
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="notes-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('notes')">Discard</button>
+        <button class="btn btn-purple" id="notes-save-btn" onclick="saveNotes()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Save to Salesforce
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-text">Done</span>
+</div>
+
+<script>
+var panelState = { teams: false, outlook: false };
+var currentApp = 'teams';
+
+function switchApp(app) {
+  currentApp = app;
+  document.querySelectorAll('.shell').forEach(function(s){ s.classList.remove('active'); });
+  document.querySelectorAll('.app-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById('shell-' + app).classList.add('active');
+  document.getElementById('tab-' + app).classList.add('active');
+}
+
+function togglePanel(app) {
+  panelState[app] = !panelState[app];
+  var panel = document.getElementById('af-panel-' + app);
+  if (panelState[app]) {
+    panel.classList.add('open');
+  } else {
+    panel.classList.remove('open');
+  }
+  // Sync nav AF icon state
+  var navAf = document.getElementById('t-nav-af');
+  var appbarAf = document.getElementById('t-appbar-af');
+  if (navAf) navAf.classList.toggle('panel-open', panelState['teams']);
+  if (appbarAf) appbarAf.classList.toggle('active', panelState['teams']);
+}
+
+function switchTab(name) {
+  var prefix = currentApp === 'outlook' ? 'o-' : '';
+  document.querySelectorAll('.af-tab').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.af-panel-section').forEach(function(s){ s.classList.remove('active'); });
+  event.target.classList.add('active');
+  var el = document.getElementById(prefix + 'tab-' + name) || document.getElementById('tab-' + name);
+  if (el) el.classList.add('active');
+}
+
+// ── Modals ─────────────────────────────────────────────────
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+}
+function closeModal(name) {
+  document.getElementById('modal-' + name).classList.remove('open');
+}
+
+// ── Content picker toggles ──────────────────────────────────
+function toggleCpi(item) {
+  var check = item.querySelector('.cpi-check');
+  check.classList.toggle('on');
+}
+
+// ── Send email ──────────────────────────────────────────────
+function sendEmail() {
+  var btn = document.getElementById('email-send-btn');
+  var status = document.getElementById('email-status');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Sending...';
+  status.textContent = 'Routing via approved channel…';
+  setTimeout(function() {
+    closeModal('email');
+    showToast('Email sent & logged to Dr. Morita\'s contact record');
+    // Update Teams content tab badge
+    var contentTab = document.getElementById('tab-content');
+    if (contentTab) {
+      var emailRow = contentTab.querySelectorAll('.af-row')[2];
+      if (emailRow) {
+        var badge = emailRow.querySelector('.af-status');
+        if (badge) { badge.className = 'af-status s-live'; badge.textContent = 'Sent'; }
+      }
+    }
+    // Reset button
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send via Approved Channel';
+      status.textContent = '';
+    }, 500);
+  }, 1500);
+}
+
+// ── Send content ────────────────────────────────────────────
+function sendContent() {
+  var btn = document.getElementById('content-send-btn');
+  var status = document.getElementById('content-status');
+  var selected = document.querySelectorAll('#modal-content .cpi-check.on').length;
+  if (selected === 0) { status.textContent = 'Select at least one item.'; return; }
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Delivering...';
+  status.textContent = 'Sending ' + selected + ' item' + (selected > 1 ? 's' : '') + ' via approved channel…';
+  setTimeout(function() {
+    closeModal('content');
+    showToast(selected + ' item' + (selected > 1 ? 's' : '') + ' delivered to Dr. Morita via approved channel');
+    // Update briefing panel — content row
+    document.querySelectorAll('.af-status.s-queued').forEach(function(b){ b.className = 'af-status s-live'; b.textContent = 'Sent'; });
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Deliver via Approved Channel';
+      status.textContent = '';
+    }, 500);
+  }, 1800);
+}
+
+// ── Save notes ──────────────────────────────────────────────
+function saveNotes() {
+  var btn = document.getElementById('notes-save-btn');
+  var status = document.getElementById('notes-status');
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg> Saving...';
+  status.textContent = 'Syncing to Salesforce…';
+  setTimeout(function() {
+    closeModal('notes');
+    showToast('Visit notes saved to Dr. Morita\'s contact record in Salesforce');
+    setTimeout(function() {
+      btn.disabled = false;
+      btn.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save to Salesforce';
+      status.textContent = '';
+    }, 400);
+  }, 1400);
+}
+
+// ── Teams post composer ─────────────────────────────────────
+function toggleTeamsComposer() {
+  var composer = document.getElementById('teams-composer');
+  composer.classList.toggle('open');
+}
+function postToChannel() {
+  var text = document.getElementById('tpc-text').value.trim();
+  if (!text) return;
+  var composer = document.getElementById('teams-composer');
+  composer.classList.remove('open');
+  // Append new message to Teams chat
+  var msgs = document.querySelector('.t-messages');
+  var now = new Date();
+  var timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+  var msgHtml = '<div class="t-msg" style="margin-top:4px;">' +
+    '<div class="t-msg-avatar" style="background:#6264A7">EC</div>' +
+    '<div class="t-msg-body">' +
+      '<div class="t-msg-header"><span class="t-msg-name">Evan Casto</span><span class="t-msg-role">Field Rep</span><span class="t-msg-time">' + timeStr + '</span></div>' +
+      '<div class="t-msg-text">' + escHtml(text) + '</div>' +
+    '</div></div>';
+  msgs.insertAdjacentHTML('beforeend', msgHtml);
+  msgs.scrollTop = msgs.scrollHeight;
+  showToast('Update posted to #NE Territory');
+}
+
+// ── Outlook reply ───────────────────────────────────────────
+function openOutlookReply() {
+  document.getElementById('o-reply-strip').classList.add('open');
+}
+function closeOutlookReply() {
+  document.getElementById('o-reply-strip').classList.remove('open');
+}
+function sendOutlookReply() {
+  var btn = document.getElementById('o-send-btn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  setTimeout(function() {
+    closeOutlookReply();
+    showToast('Reply sent & logged to Dr. Morita\'s contact record');
+    // Update Outlook panel content tab
+    var drafted = document.getElementById('o-tab-content');
+    if (drafted) {
+      var rows = drafted.querySelectorAll('.af-status');
+      rows.forEach(function(r){ if(r.textContent === 'Draft') { r.className = 'af-status s-live'; r.textContent = 'Sent'; } });
+    }
+    setTimeout(function(){ btn.disabled = false; btn.textContent = '⯈ Send'; }, 400);
+  }, 1400);
+}
+
+// ── Log to Salesforce (quick) ────────────────────────────────
+function logToSalesforce() {
+  showToast('Email logged to Dr. Morita\'s contact record in Salesforce');
+}
+
+// ── Toast helper ────────────────────────────────────────────
+function showToast(msg) {
+  var toast = document.getElementById('toast');
+  document.getElementById('toast-text').textContent = msg;
+  toast.style.display = 'flex';
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(function() {
+    toast.style.opacity = '0';
+    toast.style.transition = 'opacity 0.5s';
+    setTimeout(function() {
+      toast.style.display = 'none';
+      toast.style.opacity = '1';
+      toast.style.transition = '';
+    }, 500);
+  }, 3000);
+}
+
+// ── Escape HTML for dynamic content ─────────────────────────
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+}
+
+// Open Teams panel by default
+setTimeout(function(){ togglePanel('teams'); }, 400);
+</script>
+</body>
+</html>

@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentforce Life Sciences Today</title>
+<style>
+:root {
+  color-scheme: light;
+  --bg:           #EFEEEB;
+  --card:         #FFFFFF;
+  --card-inner:   #F7F6F4;
+  --border:       #E4E2DC;
+  --border-light: #EEECE8;
+  --text:         #1A1A1A;
+  --text-2:       #5C5C5C;
+  --text-3:       #9A9895;
+  /* Agentforce Life Sciences brand palette */
+  --teal:         #7040C0;
+  --teal-d:       #5830A0;
+  --teal-light:   #F0ECFF;
+  --purple:       #7040C0;
+  --purple-d:     #5830A0;
+  --purple-light: #F0ECFF;
+  --afls-dark:    #2D0568;
+  --afls-mid:     #5830A0;
+  --afls-vivid:   #7040C0;
+  --afls-light:   #F0ECFF;
+  --afls-border:  #D8CCFF;
+  --blue:         #3B82F6;
+  --blue-light:   #EFF6FF;
+  --green:        #22C55E;
+  --green-light:  #F0FDF4;
+  --amber:        #F59E0B;
+  --amber-light:  #FFFBEB;
+  --red:          #EF4444;
+  --red-light:    #FEF2F2;
+  --orange:       #F97316;
+  --orange-light: #FFF7ED;
+  --slack:        #4A154B;
+  --shadow:       0 1px 3px rgba(0,0,0,0.07), 0 4px 16px rgba(0,0,0,0.06);
+  --r:            14px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; min-height: 100vh; }
+
+/* ── Chrome ── */
+.af-chrome { background: #2D0568; padding: 0 20px; height: 38px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.chrome-left { display: flex; align-items: center; gap: 10px; }
+.af-logo { width: 22px; height: 22px; border-radius: 5px; background: rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.af-logo svg { width: 12px; height: 12px; }
+.chrome-title { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.85); letter-spacing: 0.1px; }
+.chrome-sep { width: 1px; height: 14px; background: rgba(255,255,255,0.12); }
+.chrome-sub { font-size: 11px; color: rgba(255,255,255,0.35); }
+.chrome-right { display: flex; align-items: center; gap: 6px; }
+.c-org { font-size: 11px; color: rgba(255,255,255,0.3); display: flex; align-items: center; gap: 4px; }
+.c-org-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+.c-btn { width: 24px; height: 24px; border-radius: 5px; background: none; border: none; color: rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; }
+.c-btn:hover { color: rgba(255,255,255,0.75); }
+.c-btn svg { width: 13px; height: 13px; }
+
+/* ── Page ── */
+.page { max-width: 100%; padding: 16px 40px 40px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ── Hero ── */
+.hero { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; }
+.hero-top { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px 14px; gap: 16px; }
+.hero-l { display: flex; align-items: center; gap: 14px; }
+.hero-sun { width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(145deg, #5830A0, #7040C0); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 2px 12px rgba(112,64,192,0.4); }
+.hero-title-txt { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+.hero-date-txt { font-size: 12px; color: var(--text-3); margin-top: 1px; }
+.hero-greeting { font-size: 15px; font-weight: 500; color: var(--text-2); }
+.hero-greeting strong { color: var(--text); font-weight: 700; }
+.hero-stats { display: flex; gap: 7px; flex-wrap: wrap; padding: 10px 20px 12px; border-top: 1px solid var(--border-light); }
+.hstat { display: flex; align-items: center; gap: 6px; border-radius: 20px; padding: 5px 13px; font-size: 12px; font-weight: 600; border: 1.5px solid transparent; }
+.hstat-num { font-size: 14px; font-weight: 800; }
+.hs-purple { background: var(--purple-light); border-color: #C4BAFF; color: var(--purple); }
+.hs-amber  { background: var(--amber-light);  border-color: #FCD34D; color: #B45309; }
+.hs-blue   { background: var(--blue-light);   border-color: #BFDBFE; color: #1D4ED8; }
+.hs-green  { background: var(--green-light);  border-color: #86EFAC; color: #15803D; }
+
+/* ── Briefing ── */
+.briefing { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; }
+.brf-hdr { background: linear-gradient(135deg,#2D0568 0%,#5030A0 55%,#7040C0 100%); padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+.brf-hdr-l { flex: 1; }
+.brf-badges { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; }
+.brf-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.18); border-radius: 20px; padding: 2px 9px; font-size: 10px; font-weight: 700; color: rgba(255,255,255,0.85); text-transform: uppercase; letter-spacing: 0.5px; }
+.brf-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: #A080E0; }
+.brf-compliant { display: inline-flex; align-items: center; gap: 3px; background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); border-radius: 20px; padding: 2px 9px; font-size: 10px; font-weight: 700; color: #86EFAC; }
+.brf-name { font-size: 15px; font-weight: 700; color: white; }
+.brf-sub  { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; display: flex; align-items: center; gap: 5px; }
+.brf-dot  { width: 2px; height: 2px; border-radius: 50%; background: rgba(255,255,255,0.25); }
+.brf-chev { color: rgba(255,255,255,0.4); transition: transform 0.22s; }
+.brf-chev.open { transform: rotate(90deg); }
+.brf-chev svg { width: 16px; height: 16px; }
+.brf-body { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4,0,0.2,1); }
+.brf-body.open { max-height: 600px; }
+.br-row { display: flex; align-items: flex-start; gap: 12px; padding: 11px 18px; border-bottom: 1px solid var(--border-light); cursor: default; transition: background 0.12s; }
+.br-row:last-child { border-bottom: none; }
+.br-row:hover { background: #F4F2FF; }
+.br-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 12px; flex-shrink: 0; margin-top: 1px; }
+.br-c { flex: 1; min-width: 0; }
+.br-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-3); margin-bottom: 3px; }
+.br-txt { font-size: 12px; color: var(--text); line-height: 1.45; }
+.br-txt em { font-style: normal; color: var(--purple); font-weight: 600; }
+.br-st { font-size: 9px; font-weight: 700; padding: 2px 8px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.4px; flex-shrink: 0; margin-top: 3px; align-self: flex-start; white-space: nowrap; }
+.bst-live    { background: var(--green-light); color: var(--green); }
+.bst-pending { background: var(--amber-light); color: #B45309; }
+.bst-closed  { background: #F0F0EE; color: var(--text-3); }
+.bst-queued  { background: var(--blue-light);  color: var(--blue); }
+.bst-high    { background: var(--purple-light); color: var(--purple); }
+
+/* ── Grid ── */
+.main-grid { display: grid; grid-template-columns: 1fr 360px; gap: 14px; align-items: start; }
+.col-side { display: flex; flex-direction: column; gap: 12px; }
+@media (max-width: 900px) { .main-grid { grid-template-columns: 1fr; } }
+
+/* ── Section card ── */
+.scard { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); overflow: hidden; }
+.scard-hdr { display: flex; align-items: center; gap: 10px; padding: 13px 18px; cursor: pointer; user-select: none; transition: background 0.12s; border-bottom: 1px solid transparent; }
+.scard-hdr:hover { background: var(--card-inner); }
+.scard-hdr.open { border-bottom-color: var(--border-light); }
+.scard-chev { color: var(--text-3); transition: transform 0.22s; display: flex; align-items: center; flex-shrink: 0; }
+.scard-chev.open { transform: rotate(90deg); }
+.scard-chev svg { width: 15px; height: 15px; }
+.scard-ico { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+.si-p { background: var(--teal-light); }
+.si-a { background: var(--amber-light); }
+.si-b { background: var(--blue-light); }
+.scard-lbl { font-size: 14px; font-weight: 700; flex: 1; letter-spacing: -0.1px; }
+.scard-cnt { font-size: 11px; font-weight: 700; border-radius: 20px; padding: 2px 9px; background: var(--border-light); color: var(--text-3); }
+.scard-cnt.hot  { background: var(--purple-light); color: var(--purple); }
+.scard-cnt.warn { background: var(--amber-light);  color: #B45309; }
+.scard-body { max-height: 0; overflow: hidden; transition: max-height 0.28s cubic-bezier(0.4,0,0.2,1); }
+.scard-body.open { max-height: 2000px; }
+.scard-footer { padding: 9px 18px; border-top: 1px solid var(--border-light); text-align: center; }
+.footer-link { background: none; border: none; font-size: 12px; font-weight: 600; color: var(--purple); cursor: pointer; }
+.footer-link:hover { text-decoration: underline; }
+
+/* ── Agenda ── */
+.agenda-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 18px 0; }
+.adate-grp { display: flex; align-items: center; gap: 10px; }
+.aday-num { font-size: 28px; font-weight: 800; color: var(--teal); line-height: 1; }
+.aday-info { display: flex; flex-direction: column; }
+.aweekday { font-size: 12px; font-weight: 700; color: var(--teal); }
+.amonth   { font-size: 11px; color: var(--text-3); }
+.anav-btns { display: flex; align-items: center; gap: 6px; }
+.anav-btn { width: 28px; height: 28px; border-radius: 7px; border: 1.5px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-2); transition: all 0.15s; }
+.anav-btn:hover { border-color: var(--purple); color: var(--purple); }
+.anav-btn svg { width: 13px; height: 13px; }
+.timeline { padding: 10px 18px 16px; }
+.tl-row { display: flex; align-items: flex-start; gap: 12px; min-height: 40px; }
+.tl-time { width: 38px; font-size: 11px; color: var(--text-3); font-weight: 500; padding-top: 5px; text-align: right; flex-shrink: 0; }
+.tl-time.nw { color: var(--red); font-weight: 700; }
+.tl-col { flex: 1; border-left: 1.5px solid var(--border-light); padding: 3px 0 3px 10px; min-height: 40px; }
+.tl-col.nw { border-left-color: var(--red); }
+.tl-empty { height: 36px; }
+.now-bar { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+.now-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); flex-shrink: 0; }
+.now-line { flex: 1; height: 1px; background: var(--red); opacity: 0.35; }
+.now-lbl { font-size: 10px; font-weight: 700; color: var(--red); }
+.vb { background: var(--blue-light); border-left: 3px solid var(--blue); border-radius: 0 7px 7px 0; padding: 7px 10px; margin-bottom: 4px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; transition: box-shadow 0.15s, background 0.15s; }
+.vb:hover { box-shadow: 0 2px 8px rgba(59,130,246,0.18); background: #DBEAFE; }
+.vb.vb-next { border-left-color: var(--teal); background: var(--teal-light); }
+.vb.vb-next:hover { background: #C8EEEC; }
+.vb.vb-done { border-left-color: var(--border); background: var(--card-inner); opacity: 0.65; }
+.vb-name { font-size: 13px; font-weight: 600; }
+.vb-time { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.vb-st { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px; flex-shrink: 0; }
+.vst-done { background: #F0F0EE; color: var(--text-3); }
+.vst-next { background: var(--teal-light); color: var(--teal); }
+.vst-up   { background: var(--blue-light); color: var(--blue); }
+
+/* ── Insights ── */
+.ins-item { display: flex; align-items: flex-start; gap: 11px; padding: 11px 18px; border-bottom: 1px solid var(--border-light); transition: background 0.12s; cursor: pointer; }
+.ins-item:last-child { border-bottom: none; }
+.ins-item:hover { background: var(--card-inner); }
+.ins-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.ins-c { flex: 1; min-width: 0; }
+.ins-title  { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.ins-detail { font-size: 11px; color: var(--text-2); line-height: 1.45; }
+.ins-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; padding: 2px 8px; border-radius: 20px; flex-shrink: 0; margin-top: 2px; align-self: flex-start; }
+
+/* ── Tasks ── */
+.task-item { display: flex; align-items: flex-start; gap: 10px; padding: 11px 18px; border-bottom: 1px solid var(--border-light); transition: background 0.12s; cursor: pointer; }
+.task-item:last-child { border-bottom: none; }
+.task-item:hover { background: var(--card-inner); }
+.t-chk { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--border); flex-shrink: 0; margin-top: 2px; background: white; display: flex; align-items: center; justify-content: center; transition: all 0.15s; cursor: pointer; }
+.t-chk:hover { border-color: var(--purple); }
+.t-chk.on { background: var(--purple); border-color: var(--purple); }
+.t-chk.on::after { content:''; width:7px; height:4px; border-left:2px solid white; border-bottom:2px solid white; transform:rotate(-45deg) translateY(-1px); display:block; }
+.t-body { flex: 1; min-width: 0; }
+.t-title { font-size: 12px; font-weight: 500; }
+.t-meta  { font-size: 11px; color: var(--text-3); margin-top: 2px; display: flex; gap: 7px; flex-wrap: wrap; }
+.ttag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; padding: 1px 7px; border-radius: 20px; }
+.ttag-ov { background: var(--red-light); color: var(--red); }
+.ttag-td { background: var(--orange-light); color: var(--orange); }
+
+/* ── HCP List ── */
+.hcp-item { display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-bottom: 1px solid var(--border-light); cursor: pointer; transition: background 0.12s; }
+.hcp-item:last-child { border-bottom: none; }
+.hcp-item:hover { background: var(--card-inner); }
+.hcp-av { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; flex-shrink: 0; }
+.hcp-inf { flex: 1; min-width: 0; }
+.hcp-name { font-size: 12px; font-weight: 600; }
+.hcp-spec { font-size: 11px; color: var(--text-3); }
+.hcp-tier { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.3px; padding: 2px 8px; border-radius: 20px; }
+.tier-t { background: var(--amber-light); color: #B45309; }
+.tier-g { background: var(--green-light); color: #15803D; }
+.tier-n { background: var(--blue-light);  color: var(--blue); }
+
+/* ── Actions bar ── */
+.actions-bar { background: var(--card); border-radius: var(--r); box-shadow: var(--shadow); padding: 14px 18px; }
+.ab-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.6px; color: var(--text-3); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+.ab-label::after { content:''; flex:1; height:1px; background: var(--border-light); }
+.ab-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+.ab-btn { display: flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 9px; border: 1.5px solid var(--border); background: var(--card-inner); font-size: 12px; font-weight: 600; color: var(--text-2); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.ab-btn:hover { border-color: var(--purple); color: var(--purple); background: var(--purple-light); }
+.ab-btn.ab-primary { background: var(--purple); color: white; border-color: var(--purple); }
+.ab-btn.ab-primary:hover { background: var(--purple-d); border-color: var(--purple-d); }
+.ab-btn.ab-slack:hover { background: #F9F0F9; color: var(--slack); border-color: var(--slack); }
+.ab-ico { width: 18px; height: 18px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+
+/* ══ Modals ══ */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.42); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+.overlay.open { display: flex; }
+.modal { background: white; border-radius: 13px; box-shadow: 0 8px 40px rgba(0,0,0,0.22); width: 100%; max-width: 520px; max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; animation: mpop 0.18s ease; }
+@keyframes mpop { from { opacity:0; transform:scale(0.96) translateY(8px); } to { opacity:1; transform:none; } }
+.m-hdr { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.m-hdr-l { display: flex; align-items: center; gap: 10px; }
+.m-ico { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+.m-title { font-size: 14px; font-weight: 700; }
+.m-sub   { font-size: 11px; color: var(--text-3); margin-top: 1px; }
+.m-close { width: 28px; height: 28px; border-radius: 6px; background: none; border: 1.5px solid var(--border); cursor: pointer; color: var(--text-2); display: flex; align-items: center; justify-content: center; font-size: 16px; line-height: 1; transition: background 0.12s; }
+.m-close:hover { background: var(--card-inner); }
+.m-fields { padding: 10px 18px; border-bottom: 1px solid var(--border); flex-shrink: 0; display: flex; flex-direction: column; gap: 7px; }
+.m-field { display: flex; align-items: center; gap: 10px; }
+.m-flbl { font-size: 12px; font-weight: 600; color: var(--text-3); width: 40px; flex-shrink: 0; }
+.m-tag { display: inline-flex; align-items: center; background: var(--teal-light); color: var(--teal); border-radius: 20px; padding: 3px 10px; font-size: 12px; font-weight: 600; }
+.m-body { flex: 1; overflow-y: auto; padding: 14px 18px; }
+.m-edit { font-size: 13px; line-height: 1.7; color: var(--text); outline: none; min-height: 130px; white-space: pre-wrap; font-family: inherit; }
+.m-compliance { padding: 7px 18px; background: #F7F6F4; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-2); display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+.m-ftr { padding: 12px 18px; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.m-ftr-l { font-size: 11px; color: var(--text-3); }
+.m-ftr-r { display: flex; gap: 8px; }
+.btn { padding: 7px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+.btn-ghost  { background: none; border: 1.5px solid var(--border); color: var(--text-2); }
+.btn-ghost:hover { background: var(--card-inner); }
+.btn-purple { background: var(--purple); color: white; }
+.btn-purple:hover { background: var(--purple-d); }
+.btn-purple:disabled { background: #B0A8F5; cursor: default; }
+.btn-green  { background: var(--green); color: white; }
+.btn-green:hover  { background: #16A34A; }
+.btn-green:disabled { background: #86EFAC; cursor: default; }
+.btn-slack  { background: #4A154B; color: white; }
+.btn-slack:hover  { background: #3B1040; }
+.btn-slack:disabled { background: #7B4E7D; cursor: default; }
+.cpi { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); cursor: pointer; }
+.cpi:last-child { border-bottom: none; }
+.cpi-chk { width: 16px; height: 16px; border-radius: 4px; border: 2px solid var(--border); background: white; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all 0.15s; }
+.cpi-chk.on { background: var(--purple); border-color: var(--purple); }
+.cpi-chk.on::after { content:''; width:8px; height:5px; border-left:2px solid white; border-bottom:2px solid white; transform:rotate(-45deg) translateY(-1px); display:block; }
+.cpi-ico { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.cpi-info { flex: 1; }
+.cpi-title { font-size: 13px; font-weight: 600; }
+.cpi-meta  { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+.cpi-badge { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; }
+.slack-chs { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+.slack-ch { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1.5px solid var(--afls-border); background: white; color: var(--afls-mid); cursor: pointer; transition: all 0.15s; }
+.slack-ch.active { background: var(--afls-vivid); color: white; border-color: var(--afls-vivid); }
+.slack-ta { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.6; font-family: inherit; resize: none; outline: none; min-height: 90px; transition: border-color 0.15s; }
+.slack-ta:focus { border-color: var(--purple); }
+.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1A1A1A; color: white; border-radius: 10px; padding: 11px 18px; font-size: 13px; font-weight: 600; display: none; align-items: center; gap: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.25); z-index: 300; white-space: nowrap; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══ Agentforce Chat ══ */
+.chat-bar-wrap { position:fixed; bottom:0; left:0; right:0; z-index:150; display:flex; flex-direction:column; align-items:center; pointer-events:none; }
+.chat-panel { width:100%; max-width:560px; background:white; border-radius:20px 20px 0 0; box-shadow:0 -4px 32px rgba(45,5,104,0.16); overflow:hidden; pointer-events:all; max-height:0; transition:max-height 0.32s cubic-bezier(0.4,0,0.2,1); }
+.chat-panel.open { max-height:420px; }
+.cp-header { background:linear-gradient(135deg,#2D0568 0%,#5030A0 55%,#7040C0 100%); padding:12px 16px; display:flex; align-items:center; justify-content:space-between; }
+.cp-agent { display:flex; align-items:center; gap:10px; }
+.cp-avatar { width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.cp-avatar svg { width:16px; height:20px; }
+.cp-agent-name { font-size:13px; font-weight:700; color:white; }
+.cp-agent-sub  { font-size:10px; color:rgba(255,255,255,0.5); margin-top:1px; }
+.cp-close { background:rgba(255,255,255,0.1); border:none; border-radius:6px; width:26px; height:26px; cursor:pointer; color:rgba(255,255,255,0.6); display:flex; align-items:center; justify-content:center; font-size:16px; line-height:1; transition:background 0.12s; }
+.cp-close:hover { background:rgba(255,255,255,0.2); color:white; }
+.cp-messages { height:240px; overflow-y:auto; padding:14px 14px 6px; display:flex; flex-direction:column; gap:10px; background:#FAFAF8; }
+.cp-messages::-webkit-scrollbar { width:3px; }
+.cp-messages::-webkit-scrollbar-thumb { background:var(--afls-bdr,#D8CCFF); border-radius:3px; }
+.msg-agent { display:flex; align-items:flex-start; gap:8px; }
+.msg-agent-av { width:26px; height:26px; border-radius:50%; background:linear-gradient(135deg,#5030A0,#7040C0); display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+.msg-agent-av svg { width:12px; height:15px; }
+.msg-agent-bubble { background:#F0ECFF; border:1px solid #D8CCFF; border-radius:4px 14px 14px 14px; padding:9px 12px; max-width:calc(100% - 40px); font-size:12px; line-height:1.55; color:var(--text); }
+.msg-agent-bubble strong { color:#7040C0; font-weight:600; }
+.msg-user { display:flex; justify-content:flex-end; }
+.msg-user-bubble { background:white; border:1.5px solid var(--border); border-radius:14px 4px 14px 14px; padding:9px 12px; max-width:82%; font-size:12px; line-height:1.55; color:var(--text); box-shadow:0 1px 3px rgba(45,5,104,0.06); }
+.msg-typing { display:flex; align-items:flex-start; gap:8px; }
+.typing-dots { display:flex; align-items:center; gap:4px; padding:12px 14px; background:#F0ECFF; border:1px solid #D8CCFF; border-radius:4px 14px 14px 14px; }
+.typing-dots span { width:6px; height:6px; border-radius:50%; background:#7040C0; opacity:0.4; animation:tdot 1.2s ease-in-out infinite; }
+.typing-dots span:nth-child(2){animation-delay:0.2s} .typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes tdot{0%,80%,100%{opacity:0.4;transform:scale(0.9)}40%{opacity:1;transform:scale(1.1)}}
+.cp-prompts { padding:8px 14px 6px; display:flex; gap:7px; flex-wrap:wrap; background:#FAFAF8; border-top:1px solid #EDE8FF; }
+.cp-prompt { background:white; border:1.5px solid #D8CCFF; border-radius:20px; padding:5px 11px; font-size:11px; font-weight:600; color:#5830A0; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+.cp-prompt:hover { background:#F0ECFF; border-color:#7040C0; color:#7040C0; }
+.cp-input-row { display:flex; align-items:center; gap:8px; padding:10px 14px 12px; background:white; border-top:1px solid #EDE8FF; pointer-events:all; }
+.cp-input { flex:1; border:1.5px solid var(--border); border-radius:22px; padding:8px 14px; font-size:13px; font-family:inherit; outline:none; transition:border-color 0.15s; background:white; color:var(--text); }
+.cp-input:focus { border-color:#7040C0; }
+.cp-input::placeholder { color:var(--text-3); }
+.cp-send { width:34px; height:34px; border-radius:50%; flex-shrink:0; background:#7040C0; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:background 0.15s; }
+.cp-send:hover { background:#5830A0; }
+.cp-send svg { width:14px; height:14px; }
+.chat-trigger { width:100%; max-width:560px; background:linear-gradient(135deg,#2D0568 0%,#5830A0 60%,#7040C0 100%); padding:10px 16px; display:flex; align-items:center; gap:10px; cursor:pointer; pointer-events:all; border-radius:16px 16px 0 0; transition:opacity 0.15s; box-shadow:0 -3px 20px rgba(45,5,104,0.18); }
+.chat-trigger:hover { opacity:0.93; }
+.ct-avatar { width:30px; height:30px; border-radius:50%; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.ct-avatar svg { width:14px; height:17px; }
+.ct-text { flex:1; }
+.ct-label { font-size:12px; font-weight:700; color:white; }
+.ct-sub   { font-size:10px; color:rgba(255,255,255,0.45); margin-top:1px; }
+.ct-chevron { color:rgba(255,255,255,0.45); transition:transform 0.28s; display:flex; align-items:center; }
+.ct-chevron.open { transform:rotate(180deg); }
+.ct-chevron svg { width:16px; height:16px; }
+.chat-spacer { height:64px; }
+</style>
+</head>
+<body>
+
+<!-- Chrome -->
+<header class="af-chrome">
+  <div class="chrome-left">
+    <div class="af-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+    <span class="chrome-title">Agentforce Life Sciences</span>
+    <span class="chrome-sep"></span>
+    <span class="chrome-sub">NE Territory &middot; Evan Casto</span>
+  </div>
+  <div class="chrome-right">
+    <div class="c-org"><span class="c-org-dot"></span>Life Sciences Cloud</div>
+    <button class="c-btn" onclick="refreshAll()"><svg id="rsv" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    <button class="c-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+  </div>
+</header>
+
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-top">
+      <div class="hero-l">
+        <div class="hero-sun">
+          <!-- AFLS double helix mark -->
+          <svg width="22" height="28" viewBox="0 0 22 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Strand 1: curves left → right → left -->
+            <path d="M4,2 C12,2 18,7 18,14 C18,21 12,26 4,26"
+                  stroke="white" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <!-- Strand 2: mirror curve right → left → right -->
+            <path d="M18,2 C10,2 4,7 4,14 C4,21 10,26 18,26"
+                  stroke="rgba(255,255,255,0.62)" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+            <!-- Base pairs at even intervals -->
+            <line x1="4.5"  y1="7.5"  x2="17.5" y2="7.5"  stroke="white" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+            <line x1="4"    y1="14"   x2="18"   y2="14"    stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="4.5"  y1="20.5" x2="17.5" y2="20.5"  stroke="white" stroke-width="1.6" stroke-linecap="round" opacity="0.9"/>
+          </svg>
+        </div>
+        <div>
+          <div class="hero-title-txt">Agentforce Life Sciences</div>
+          <div class="hero-date-txt" id="hero-date">Monday, June 15, 2026</div>
+        </div>
+      </div>
+      <div class="hero-greeting" id="hero-greet">Good morning, <strong>Evan Casto</strong> &mdash; let&rsquo;s do this.</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hstat hs-purple"><span class="hstat-num">5</span> visits today</div>
+      <div class="hstat hs-amber"><span class="hstat-num">4</span> tasks due</div>
+      <div class="hstat hs-blue"><span class="hstat-num">4</span> new insights</div>
+      <div class="hstat hs-green"><span class="hstat-num">&#10003;</span> Org connected</div>
+    </div>
+  </div>
+
+  <!-- Morita briefing -->
+  <div class="briefing">
+    <div class="brf-hdr" onclick="toggleBriefing()">
+      <div class="brf-hdr-l">
+        <div class="brf-badges">
+          <span class="brf-badge"><span class="brf-badge-dot"></span>Agentforce</span>
+          <span class="brf-compliant"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Compliant</span>
+        </div>
+        <div class="brf-name">Dr. Aaron Morita &mdash; Account Briefing</div>
+        <div class="brf-sub">Partners Healthcare <span class="brf-dot"></span> Oncology <span class="brf-dot"></span> Life Sciences Cloud</div>
+      </div>
+      <span class="brf-chev open" id="brf-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+    </div>
+    <div class="brf-body open" id="brf-body">
+      <div class="br-row"><div class="br-icon" style="background:#EFF6FF">&#128221;</div><div class="br-c"><div class="br-lbl">Last Interaction</div><div class="br-txt">Today&rsquo;s visit &mdash; <em>Phase III data discussion</em>, EU approval timeline query, competitor AE flag</div></div><span class="br-st bst-live">Today</span></div>
+      <div class="br-row"><div class="br-icon" style="background:#F0ECFF">&#129504;</div><div class="br-c"><div class="br-lbl">Open Medical Inquiry</div><div class="br-txt"><em>Mechanism of action depth</em> &mdash; MSL routing initiated. SLA: <em>48&ndash;72 hrs</em></div></div><span class="br-st bst-pending">Pending</span></div>
+      <div class="br-row"><div class="br-icon" style="background:#FDF3E8">&#127979;</div><div class="br-c"><div class="br-lbl">Clinical Education</div><div class="br-txt">Peer exchange flagged &mdash; CE team notified, <em>awaiting scheduling</em></div></div><span class="br-st bst-pending">In Progress</span></div>
+      <div class="br-row"><div class="br-icon" style="background:#F0FDF4">&#128230;</div><div class="br-c"><div class="br-lbl">Approved Content</div><div class="br-txt"><em>Immunexis Phase III</em> + EU regulatory summary &mdash; delivery within 48 hrs</div></div><span class="br-st bst-queued">Queued</span></div>
+      <div class="br-row"><div class="br-icon" style="background:#FEF2F2">&#9888;&#65039;</div><div class="br-c"><div class="br-lbl">Pharmacovigilance</div><div class="br-txt">Competitor AE documented and routed &mdash; no action required</div></div><span class="br-st bst-closed">Closed</span></div>
+      <div class="br-row"><div class="br-icon" style="background:#FFFBEB">&#9889;</div><div class="br-c"><div class="br-lbl">Engagement Score</div><div class="br-txt"><em>High</em> &mdash; 3 visits this quarter, all clinical. Strong Immunexis interest.</div></div><span class="br-st bst-high">High</span></div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="actions-bar">
+    <div class="ab-label">Quick Actions</div>
+    <div class="ab-grid">
+      <button class="ab-btn ab-primary" onclick="openM('email')"><span class="ab-ico" style="background:rgba(255,255,255,0.2)">&#9993;</span> Email Dr. Morita</button>
+      <button class="ab-btn ab-slack" onclick="openM('slack')"><span class="ab-ico" style="background:#F9F0F9"><svg width="11" height="11" viewBox="0 0 24 24" fill="#4A154B"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></span> Post to Slack</button>
+      <button class="ab-btn" onclick="openM('content')"><span class="ab-ico" style="background:#F0FDF4">&#128230;</span> Send Immunexis data</button>
+      <button class="ab-btn" onclick="openM('notes')"><span class="ab-ico" style="background:#FDF3E8">&#128221;</span> Log visit notes</button>
+      <button class="ab-btn" onclick="openM('notes')"><span class="ab-ico" style="background:#EFF6FF">&#127908;</span> Dictate visit</button>
+    </div>
+  </div>
+
+  <!-- Two column -->
+  <div class="main-grid">
+
+    <!-- Agenda -->
+    <div class="scard">
+      <div class="scard-hdr open" onclick="toggleSec('agenda')">
+        <span class="scard-chev open" id="agenda-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+        <div class="scard-ico si-p"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7040C0" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <span class="scard-lbl">Agenda</span>
+        <span class="scard-cnt hot">5</span>
+      </div>
+      <div class="scard-body open" id="agenda-body">
+        <div class="agenda-nav">
+          <div class="adate-grp">
+            <span class="aday-num" id="a-day">15</span>
+            <div class="aday-info"><div class="aweekday" id="a-wd">Monday</div><div class="amonth" id="a-mo">June 2026</div></div>
+          </div>
+          <div class="anav-btns">
+            <button class="anav-btn" onclick="changeDay(-1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+            <button class="anav-btn" onclick="changeDay(1)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></button>
+          </div>
+        </div>
+        <div class="timeline" id="tl"></div>
+      </div>
+    </div>
+
+    <!-- Right col -->
+    <div class="col-side">
+
+      <!-- Insights -->
+      <div class="scard">
+        <div class="scard-hdr" onclick="toggleSec('insights')">
+          <span class="scard-chev" id="insights-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="scard-ico si-p"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7040C0" stroke-width="2.5" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <span class="scard-lbl">Emerging Insights</span>
+          <span class="scard-cnt hot">4</span>
+        </div>
+        <div class="scard-body" id="insights-body">
+          <div class="ins-item"><div class="ins-dot" style="background:#7040C0"></div><div class="ins-c"><div class="ins-title">Immunexis Phase III data package ready</div><div class="ins-detail">EU regulatory summary approved for distribution. Dr. Morita requested at today&rsquo;s visit.</div></div><span class="ins-tag" style="background:#F0ECFF;color:#7040C0">Immunexis</span></div>
+          <div class="ins-item"><div class="ins-dot" style="background:#F59E0B"></div><div class="ins-c"><div class="ins-title">Formulary: Immunexis added to BCBS IL Tier 2</div><div class="ins-detail">Affects 4 HCPs on your list including Dr. Morita. Update messaging for remaining visits.</div></div><span class="ins-tag" style="background:#FFFBEB;color:#B45309">Formulary</span></div>
+          <div class="ins-item"><div class="ins-dot" style="background:#EF4444"></div><div class="ins-c"><div class="ins-title">Injection site reactions flagged at Dr. Chang&rsquo;s practice</div><div class="ins-detail">3 patients flagged concerns. Updated talking points now in content library.</div></div><span class="ins-tag" style="background:#FEF2F2;color:#EF4444">Alert</span></div>
+          <div class="ins-item"><div class="ins-dot" style="background:#22C55E"></div><div class="ins-c"><div class="ins-title">MSL visit scheduled with Dr. Nakamura next week</div><div class="ins-detail">Confirm discussion topics. 2 open medical inquiries pending.</div></div><span class="ins-tag" style="background:#F0FDF4;color:#15803D">Medical</span></div>
+        </div>
+      </div>
+
+      <!-- Tasks -->
+      <div class="scard">
+        <div class="scard-hdr" onclick="toggleSec('tasks')">
+          <span class="scard-chev" id="tasks-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="scard-ico si-a"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <span class="scard-lbl">My Tasks</span>
+          <span class="scard-cnt warn">4</span>
+        </div>
+        <div class="scard-body" id="tasks-body">
+          <div class="task-item" id="ti-email"><div class="t-chk" id="tc-email" onclick="toggleTask(event,'tc-email','ti-email')"></div><div class="t-body"><div class="t-title">Send follow-up email to Dr. Morita &mdash; Immunexis Phase III next steps</div><div class="t-meta"><span class="ttag ttag-td">Due today</span><span>Aaron Morita, MD &middot; Partners Healthcare</span></div></div></div>
+          <div class="task-item" id="ti-sample"><div class="t-chk" id="tc-sample" onclick="toggleTask(event,'tc-sample','ti-sample')"></div><div class="t-body"><div class="t-title">Submit sample request &mdash; Dr. Nakamura visit</div><div class="t-meta"><span class="ttag ttag-ov">1 day overdue</span><span>Robert Nakamura, MD</span></div></div></div>
+          <div class="task-item" id="ti-tp"><div class="t-chk" id="tc-tp" onclick="toggleTask(event,'tc-tp','ti-tp')"></div><div class="t-body"><div class="t-title">Review injection site talking points before O&rsquo;Brien call</div><div class="t-meta"><span class="ttag ttag-td">Due today</span><span>Christine O&rsquo;Brien, MD</span></div></div></div>
+          <div class="task-item" id="ti-log"><div class="t-chk" id="tc-log" onclick="toggleTask(event,'tc-log','ti-log')"></div><div class="t-body"><div class="t-title">Log call notes from last week &mdash; Reyes follow-up</div><div class="t-meta"><span class="ttag ttag-td">Due today</span><span>Michelle Reyes, NP</span></div></div></div>
+          <div class="scard-footer"><button class="footer-link">View all tasks &rsaquo;</button></div>
+        </div>
+      </div>
+
+      <!-- HCP List -->
+      <div class="scard">
+        <div class="scard-hdr" onclick="toggleSec('hcp')">
+          <span class="scard-chev" id="hcp-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></span>
+          <div class="scard-ico si-b"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3B82F6" stroke-width="2.5" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <span class="scard-lbl">My HCP List</span>
+          <span class="scard-cnt">6</span>
+        </div>
+        <div class="scard-body" id="hcp-body">
+          <div class="hcp-item"><div class="hcp-av" style="background:#7040C0">AM</div><div class="hcp-inf"><div class="hcp-name">Aaron Morita, MD</div><div class="hcp-spec">Oncology &middot; Partners Healthcare</div></div><span class="hcp-tier tier-t">Target</span></div>
+          <div class="hcp-item"><div class="hcp-av" style="background:#3B82F6">RN</div><div class="hcp-inf"><div class="hcp-name">Robert Nakamura, MD</div><div class="hcp-spec">Endocrinology</div></div><span class="hcp-tier tier-t">Target</span></div>
+          <div class="hcp-item"><div class="hcp-av" style="background:#22C55E">CO</div><div class="hcp-inf"><div class="hcp-name">Christine O&rsquo;Brien, MD</div><div class="hcp-spec">Internal Medicine</div></div><span class="hcp-tier tier-g">Growing</span></div>
+          <div class="hcp-item"><div class="hcp-av" style="background:#F59E0B">MR</div><div class="hcp-inf"><div class="hcp-name">Michelle Reyes, NP</div><div class="hcp-spec">Primary Care</div></div><span class="hcp-tier tier-g">Growing</span></div>
+          <div class="hcp-item"><div class="hcp-av" style="background:#EF4444">NC</div><div class="hcp-inf"><div class="hcp-name">Nina Chandra, MD</div><div class="hcp-spec">Cardiology</div></div><span class="hcp-tier tier-n">New</span></div>
+          <div class="hcp-item"><div class="hcp-av" style="background:#6B7280">PC</div><div class="hcp-inf"><div class="hcp-name">Peter Chang, MD</div><div class="hcp-spec">Rheumatology</div></div><span class="hcp-tier tier-t">Target</span></div>
+          <div class="scard-footer"><button class="footer-link">View full territory &rsaquo;</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="chat-spacer"></div>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Email -->
+<div class="overlay" id="ov-email" onclick="if(event.target===this)closeM('email')">
+  <div class="modal">
+    <div class="m-hdr"><div class="m-hdr-l"><div class="m-ico" style="background:#F0ECFF">&#9993;&#65039;</div><div><div class="m-title">Follow-up Email</div><div class="m-sub">Agentforce Life Sciences &middot; Approved channel</div></div></div><button class="m-close" onclick="closeM('email')">&times;</button></div>
+    <div class="m-fields">
+      <div class="m-field"><span class="m-flbl">To</span><span class="m-tag">Dr. Aaron Morita &lt;a.morita@partnershealthcare.org&gt;</span></div>
+      <div class="m-field"><span class="m-flbl">CC</span><span style="font-size:12px;color:var(--text-3)">MSL Team &lt;msl-northeast@immunexis.com&gt;</span></div>
+      <div class="m-field"><span class="m-flbl">Re</span><span style="font-size:12px;font-weight:500">Follow-up: Immunexis Phase III &amp; next steps &mdash; Partners Healthcare visit</span></div>
+    </div>
+    <div class="m-body"><div class="m-edit" contenteditable="true">Dear Dr. Morita,
+
+Thank you for your time today &#8212; it was a really valuable conversation and I appreciate the depth of your questions around the Phase III data and EU approval timeline.
+
+I wanted to follow up with a few confirmed next steps:
+
+1. Approved Clinical Content
+I&#39;ll have the Phase III data package &#8212; including the EU regulatory submission summary &#8212; sent to you via our approved content channel within 48 hours. If there&#39;s a specific endpoint or patient population you&#39;d like prioritised, just let me know.
+
+2. Medical Inquiry &#8212; MSL Follow-Up
+Given the clinical depth of your questions, I&#39;ve connected you directly with our Medical Science Liaison team. You can expect a call from them within the next 2&#8211;3 business days to go deeper on the mechanism data and any outstanding evidence gaps.
+
+3. Clinical Education Programme
+Our regional Clinical Education team has availability for a peer exchange session next month. I&#39;ve flagged your interest and they&#39;ll be in touch shortly to align on format and timing.
+
+4. Adverse Event Note
+The patient experience with the competitor product you mentioned has been logged appropriately through our pharmacovigilance process &#8212; no action needed on your end, but I wanted you to know that&#39;s been handled.
+
+Looking forward to continuing the conversation. Please don&#39;t hesitate to reach out directly if anything comes up in the meantime.
+
+Best regards,
+Evan Casto
+Immunexis &#8212; Northeast Territory</div></div>
+    <div class="m-compliance"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> MLR approved &middot; Immunexis compliance v2.4 &middot; Auto-logged to Salesforce on send</div>
+    <div class="m-ftr"><span class="m-ftr-l" id="st-email"></span><div class="m-ftr-r"><button class="btn btn-ghost" onclick="closeM('email')">Discard</button><button class="btn btn-purple" id="btn-email" onclick="doEmail()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send via Approved Channel</button></div></div>
+  </div>
+</div>
+
+<!-- Slack -->
+<div class="overlay" id="ov-slack" onclick="if(event.target===this)closeM('slack')">
+  <div class="modal">
+    <div class="m-hdr" style="background:linear-gradient(135deg,#3B0E3D,#4A154B)">
+      <div class="m-hdr-l">
+        <div class="m-ico" style="background:rgba(255,255,255,0.12)"><svg width="15" height="15" viewBox="0 0 24 24" fill="white"><path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523A2.528 2.528 0 0 1 0 15.165a2.527 2.527 0 0 1 2.522-2.52h2.52v2.52zm1.271 0a2.527 2.527 0 0 1 2.521-2.52 2.527 2.527 0 0 1 2.521 2.52v6.313A2.528 2.528 0 0 1 8.834 24a2.528 2.528 0 0 1-2.521-2.522v-6.313zM8.834 5.042a2.528 2.528 0 0 1-2.521-2.52A2.528 2.528 0 0 1 8.834 0a2.528 2.528 0 0 1 2.521 2.522v2.52H8.834zm0 1.271a2.528 2.528 0 0 1 2.521 2.521 2.528 2.528 0 0 1-2.521 2.521H2.522A2.528 2.528 0 0 1 0 8.834a2.528 2.528 0 0 1 2.522-2.521h6.312zm10.122 2.521a2.528 2.528 0 0 1 2.522-2.521A2.528 2.528 0 0 1 24 8.834a2.528 2.528 0 0 1-2.522 2.521h-2.522V8.834zm-1.268 0a2.528 2.528 0 0 1-2.523 2.521 2.527 2.527 0 0 1-2.52-2.521V2.522A2.527 2.527 0 0 1 15.165 0a2.528 2.528 0 0 1 2.523 2.522v6.312zm-2.523 10.122a2.528 2.528 0 0 1 2.523 2.522A2.528 2.528 0 0 1 15.165 24a2.527 2.527 0 0 1-2.52-2.522v-2.522h2.52zm0-1.268a2.527 2.527 0 0 1-2.52-2.523 2.526 2.526 0 0 1 2.52-2.52h6.313A2.527 2.527 0 0 1 24 15.165a2.528 2.528 0 0 1-2.522 2.523h-6.313z"/></svg></div>
+        <div><div class="m-title" style="color:white">Post to Slack</div><div class="m-sub" style="color:rgba(255,255,255,0.45)">Agentforce Life Sciences &middot; Immunexis NE Territory</div></div>
+      </div>
+      <button class="m-close" style="border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.6)" onclick="closeM('slack')">&times;</button>
+    </div>
+    <div class="m-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:8px">Channel</div>
+      <div class="slack-chs">
+        <button class="slack-ch active" onclick="selCh(this)">#ne-territory</button>
+        <button class="slack-ch" onclick="selCh(this)">#medical-affairs</button>
+        <button class="slack-ch" onclick="selCh(this)">#field-updates</button>
+        <button class="slack-ch" onclick="selCh(this)">#immunexis-team</button>
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:8px">Message</div>
+      <textarea class="slack-ta" id="slack-msg">Visit complete ✓ Dr. Aaron Morita (Partners Healthcare, Oncology) — Phase III data discussion, EU timeline flagged, competitor AE logged to PV.
+
+Next steps:
+• Immunexis Phase III data package queued — delivery within 48hrs (approved channel)
+• MSL routing initiated for MOA inquiry — Sarah O. picking up
+• Peer exchange flagged to CE team
+• Follow-up email sent via approved channel
+
+Engagement: High — 4 more visits on today's schedule.</textarea>
+      <div style="margin-top:10px;padding:9px 12px;background:#F9F0F9;border-radius:8px;border:1px solid #C9A0CA;font-size:12px;color:#4A154B">&#9729;&#65039; Update also logged to Dr. Morita&rsquo;s contact record in Salesforce.</div>
+    </div>
+    <div class="m-ftr"><span class="m-ftr-l" id="st-slack"></span><div class="m-ftr-r"><button class="btn btn-ghost" onclick="closeM('slack')">Cancel</button><button class="btn btn-slack" id="btn-slack" onclick="doSlack()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Post to Slack</button></div></div>
+  </div>
+</div>
+
+<!-- Content -->
+<div class="overlay" id="ov-content" onclick="if(event.target===this)closeM('content')">
+  <div class="modal">
+    <div class="m-hdr"><div class="m-hdr-l"><div class="m-ico" style="background:#F0FDF4">&#128230;</div><div><div class="m-title">Send Approved Content</div><div class="m-sub">Via approved channel &middot; Dr. Aaron Morita</div></div></div><button class="m-close" onclick="closeM('content')">&times;</button></div>
+    <div class="m-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:8px">Select content</div>
+      <div class="cpi" onclick="toggleCpi(this)"><div class="cpi-chk on"></div><div class="cpi-ico" style="background:#EFF6FF">&#128196;</div><div class="cpi-info"><div class="cpi-title">Immunexis Phase III Data Package</div><div class="cpi-meta">Full trial data &middot; MLR approved &middot; 4.2 MB PDF</div></div><span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6">Approved</span></div>
+      <div class="cpi" onclick="toggleCpi(this)"><div class="cpi-chk on"></div><div class="cpi-ico" style="background:#F0ECFF">&#128196;</div><div class="cpi-info"><div class="cpi-title">EU Regulatory Submission Summary</div><div class="cpi-meta">EMA filing overview &middot; MLR approved &middot; 1.8 MB PDF</div></div><span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6">Approved</span></div>
+      <div class="cpi" onclick="toggleCpi(this)"><div class="cpi-chk"></div><div class="cpi-ico" style="background:#FFFBEB">&#128202;</div><div class="cpi-info"><div class="cpi-title">PD-L1 Subgroup Analysis Slides</div><div class="cpi-meta">Patient stratification &middot; MLR approved &middot; 2.1 MB PPTX</div></div><span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6">Approved</span></div>
+      <div class="cpi" onclick="toggleCpi(this)"><div class="cpi-chk"></div><div class="cpi-ico" style="background:#F0FDF4">&#127891;</div><div class="cpi-info"><div class="cpi-title">Peer Exchange Programme Overview</div><div class="cpi-meta">CE programme &middot; MLR approved &middot; 0.4 MB PDF</div></div><span class="cpi-badge" style="background:#EFF6FF;color:#3B82F6">Approved</span></div>
+      <div style="margin-top:12px;padding:9px 12px;background:#F7F6F4;border-radius:8px;font-size:12px;color:var(--text-2)">&#9729;&#65039; Auto-logged to Dr. Morita&rsquo;s contact record in Salesforce on delivery.</div>
+    </div>
+    <div class="m-ftr"><span class="m-ftr-l" id="st-content"></span><div class="m-ftr-r"><button class="btn btn-ghost" onclick="closeM('content')">Cancel</button><button class="btn btn-green" id="btn-content" onclick="doContent()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Deliver via Approved Channel</button></div></div>
+  </div>
+</div>
+
+<!-- Notes -->
+<div class="overlay" id="ov-notes" onclick="if(event.target===this)closeM('notes')">
+  <div class="modal">
+    <div class="m-hdr"><div class="m-hdr-l"><div class="m-ico" style="background:#FDF3E8">&#128221;</div><div><div class="m-title">Log Visit Notes</div><div class="m-sub">Dr. Aaron Morita &middot; Partners Healthcare &middot; Today</div></div></div><button class="m-close" onclick="closeM('notes')">&times;</button></div>
+    <div class="m-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:8px">&#129504; Agentforce-drafted summary &mdash; edit before saving</div>
+      <textarea id="notes-txt" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px;font-size:13px;line-height:1.6;font-family:inherit;resize:none;outline:none;min-height:200px;">Visit date: Today, 8:15–8:55 AM
+Location: Partners Healthcare, Oncology Dept.
+HCP: Dr. Aaron Morita, MD (Oncology)
+
+Discussion summary:
+- Reviewed Immunexis Phase III efficacy data. Dr. Morita asked specific questions re: EU approval timeline and EMA submission status.
+- Strong clinical interest in PD-L1 subgroup stratification — requested this data be prioritised.
+- Open medical inquiry raised: mechanism of action depth. MSL routing initiated.
+- Competitor adverse event mentioned — documented and routed to pharmacovigilance.
+- Clinical education interest confirmed: virtual peer exchange preferred.
+
+Next steps logged:
+1. Phase III data package + EU regulatory summary → approved channel, 48hrs
+2. MSL (Sarah Okafor) to follow up on MOA inquiry by Wednesday
+3. CE team notified of peer exchange interest
+4. PV log closed — no action required
+
+Engagement level: High</textarea>
+    </div>
+    <div class="m-compliance"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Will sync to Salesforce &middot; Auto-attached to Dr. Morita contact record</div>
+    <div class="m-ftr"><span class="m-ftr-l" id="st-notes"></span><div class="m-ftr-r"><button class="btn btn-ghost" onclick="closeM('notes')">Discard</button><button class="btn btn-purple" id="btn-notes" onclick="doNotes()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save to Salesforce</button></div></div>
+  </div>
+</div>
+
+<!-- ══ Agentforce Chat Bar ══ -->
+<div class="chat-bar-wrap" id="chat-wrap">
+  <div class="chat-panel" id="chat-panel">
+    <div class="cp-header">
+      <div class="cp-agent">
+        <div class="cp-avatar">
+          <svg viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.4" stroke-linecap="round" opacity="0.85"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.4" stroke-linecap="round" opacity="0.85"/></svg>
+        </div>
+        <div>
+          <div class="cp-agent-name">Agentforce Life Sciences</div>
+          <div class="cp-agent-sub">AI Agent &middot; NE Territory</div>
+        </div>
+      </div>
+      <button class="cp-close" onclick="toggleChat()">&times;</button>
+    </div>
+    <div class="cp-messages" id="cp-messages">
+      <div class="msg-agent">
+        <div class="msg-agent-av"><svg viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+        <div class="msg-agent-bubble">Good morning, Evan. You have <strong>5 visits</strong> and <strong>4 tasks</strong> today. Your Morita visit is complete. What can I help with?</div>
+      </div>
+    </div>
+    <div class="cp-prompts" id="cp-prompts">
+      <button class="cp-prompt" onclick="sendPrompt(this,'Prep me for my O\'Brien visit')">Prep me for O&rsquo;Brien</button>
+      <button class="cp-prompt" onclick="sendPrompt(this,'Summarise my Morita visit')">Summarise Morita visit</button>
+      <button class="cp-prompt" onclick="sendPrompt(this,'Any formulary updates today?')">Formulary updates?</button>
+    </div>
+    <div class="cp-input-row">
+      <input class="cp-input" id="cp-input" type="text" placeholder="Ask Agentforce Life Sciences&hellip;" onkeydown="if(event.key==='Enter')sendChat()"/>
+      <button class="cp-send" onclick="sendChat()"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2" fill="white" stroke="none"/></svg></button>
+    </div>
+  </div>
+  <div class="chat-trigger" id="chat-trigger" onclick="toggleChat()">
+    <div class="ct-avatar">
+      <svg viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/></svg>
+    </div>
+    <div class="ct-text">
+      <div class="ct-label">Agentforce Life Sciences</div>
+      <div class="ct-sub">Ask me anything about your day&hellip;</div>
+    </div>
+    <span class="ct-chevron" id="ct-chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="18 15 12 9 6 15"/></svg></span>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg><span id="toast-msg">Done</span></div>
+
+<script>
+var VISITS = [
+  { name:'Aaron Morita, MD',       start:8*60+15, end:8*60+55,  org:'Partners Healthcare', status:'done' },
+  { name:'Robert Nakamura, MD',    start:9*60+10, end:9*60+40,  org:'Endocrinology',       status:'done' },
+  { name:"Christine O'Brien, MD",  start:9*60+45, end:10*60+15, org:'Internal Medicine',   status:'next' },
+  { name:'Michelle Reyes, NP',     start:13*60+0, end:13*60+30, org:'Primary Care',        status:'upcoming' },
+  { name:'Nina Chandra, MD',       start:14*60+5, end:14*60+35, org:'Cardiology',          status:'upcoming' }
+];
+var _off = 0;
+
+(function init(){
+  var now = new Date(), h = now.getHours();
+  var greet = h<12?'Good morning':h<17?'Good afternoon':'Good evening';
+  document.getElementById('hero-greet').innerHTML = greet+', <strong>Evan Casto</strong> &mdash; let&rsquo;s do this.';
+  var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('hero-date').textContent = DS[now.getDay()]+', '+MS[now.getMonth()]+' '+now.getDate()+', '+now.getFullYear();
+  renderTl(now);
+})();
+
+function renderTl(now){
+  var DS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var d=new Date(now); d.setDate(d.getDate()+_off);
+  document.getElementById('a-day').textContent = d.getDate();
+  document.getElementById('a-wd').textContent  = DS[d.getDay()];
+  document.getElementById('a-mo').textContent  = MS[d.getMonth()]+' '+d.getFullYear();
+  var tl = document.getElementById('tl');
+  if(_off!==0){ tl.innerHTML='<div style="padding:24px;text-align:center;color:var(--text-3);font-size:13px">No visits scheduled</div>'; return; }
+  var nm = now.getHours()*60+now.getMinutes(), html='', nd=false;
+  for(var hr=8;hr<=15;hr++){
+    var hm=hr*60;
+    if(!nd && hm>nm){ html+=row(fmt(nm),true,'<div class="now-bar"><div class="now-dot"></div><div class="now-line"></div><span class="now-lbl">NOW &middot; '+fmtT(nm)+'</span></div>'); nd=true; }
+    var vs=VISITS.filter(function(v){ return v.start>=hm&&v.start<hm+60; });
+    html+=row(fmt(hm),false, vs.length?vs.map(vBlock).join(''):'<div class="tl-empty"></div>');
+  }
+  if(!nd) html='<div class="tl-row"><div class="tl-time nw">'+fmt(nm)+'</div><div class="tl-col nw"><div class="now-bar"><div class="now-dot"></div><div class="now-line"></div><span class="now-lbl">NOW &middot; '+fmtT(nm)+'</span></div></div></div>'+html;
+  tl.innerHTML=html;
+}
+function row(t,isNow,inner){ return '<div class="tl-row"><div class="tl-time'+(isNow?' nw':'')+'">'+t+'</div><div class="tl-col'+(isNow?' nw':'')+'">'+inner+'</div></div>'; }
+function vBlock(v){
+  var cls='vb',sc='vst-up',sl='Upcoming';
+  if(v.status==='done'){cls+=' vb-done';sc='vst-done';sl='Done';}
+  else if(v.status==='next'){cls+=' vb-next';sc='vst-next';sl='Up next';}
+  return '<div class="'+cls+'"><div><div class="vb-name">'+v.name+'</div><div class="vb-time">'+fmtT(v.start)+'&ndash;'+fmtT(v.end)+' &middot; '+v.org+'</div></div><span class="vb-st '+sc+'">'+sl+'</span></div>';
+}
+function fmt(m){ var h=Math.floor(m/60),mn=m%60; return (h>12?h-12:h||12)+(mn?':'+('0'+mn).slice(-2):'')+(h>=12?'pm':'am'); }
+function fmtT(m){ var h=Math.floor(m/60),mn=m%60,ap=h>=12?'PM':'AM'; return (h>12?h-12:h||12)+':'+('0'+mn).slice(-2)+' '+ap; }
+function changeDay(d){ _off+=d; renderTl(new Date()); }
+
+function toggleBriefing(){ var b=document.getElementById('brf-body'),c=document.getElementById('brf-chev'); b.classList.toggle('open'); c.classList.toggle('open',b.classList.contains('open')); }
+function toggleSec(id){ var b=document.getElementById(id+'-body'),c=document.getElementById(id+'-chev'),h=b.previousElementSibling; var o=b.classList.toggle('open'); c.classList.toggle('open',o); h.classList.toggle('open',o); }
+function toggleTask(e,ci,ti){ e.stopPropagation(); var c=document.getElementById(ci),t=document.getElementById(ti); var on=c.classList.toggle('on'); t.style.opacity=on?'0.45':'1'; }
+
+function openM(n){ document.getElementById('ov-'+n).classList.add('open'); }
+function closeM(n){ document.getElementById('ov-'+n).classList.remove('open'); }
+function toggleCpi(el){ el.querySelector('.cpi-chk').classList.toggle('on'); }
+function selCh(el){ document.querySelectorAll('.slack-ch').forEach(function(c){c.classList.remove('active');}); el.classList.add('active'); }
+
+function spin(){ return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="animation:spin 0.8s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>'; }
+function showToast(msg){ var t=document.getElementById('toast'); document.getElementById('toast-msg').textContent=msg; t.style.display='flex'; clearTimeout(window._tt); window._tt=setTimeout(function(){ t.style.opacity='0'; t.style.transition='opacity 0.5s'; setTimeout(function(){ t.style.display='none'; t.style.opacity='1'; t.style.transition=''; },500); },3000); }
+function markDone(ci,ti){ var c=document.getElementById(ci),t=document.getElementById(ti); if(c&&!c.classList.contains('on')){ c.classList.add('on'); if(t)t.style.opacity='0.45'; } }
+
+function doEmail(){ var b=document.getElementById('btn-email'),s=document.getElementById('st-email'); b.disabled=true; b.innerHTML=spin()+' Sending…'; s.textContent='Routing via approved channel…'; setTimeout(function(){ closeM('email'); showToast('Email sent & logged to Dr. Morita’s contact record'); markDone('tc-email','ti-email'); setTimeout(function(){ b.disabled=false; b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Send via Approved Channel'; s.textContent=''; },400); },1500); }
+
+function doSlack(){ var b=document.getElementById('btn-slack'),s=document.getElementById('st-slack'); var ch=document.querySelector('.slack-ch.active'); var cn=ch?ch.textContent:'#ne-territory'; b.disabled=true; b.innerHTML=spin()+' Posting…'; s.textContent='Posting to '+cn+'…'; setTimeout(function(){ closeM('slack'); showToast('Posted to '+cn+' — logged to Salesforce'); setTimeout(function(){ b.disabled=false; b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Post to Slack'; s.textContent=''; },400); },1400); }
+
+function doContent(){ var b=document.getElementById('btn-content'),s=document.getElementById('st-content'); var n=document.querySelectorAll('#ov-content .cpi-chk.on').length; if(!n){s.textContent='Select at least one item.';return;} b.disabled=true; b.innerHTML=spin()+' Delivering…'; s.textContent='Sending '+n+' item'+(n>1?'s':'')+' via approved channel…'; setTimeout(function(){ closeM('content'); showToast(n+' item'+(n>1?'s':'')+' delivered to Dr. Morita via approved channel'); setTimeout(function(){ b.disabled=false; b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg> Deliver via Approved Channel'; s.textContent=''; },400); },1800); }
+
+function doNotes(){ var b=document.getElementById('btn-notes'),s=document.getElementById('st-notes'); b.disabled=true; b.innerHTML=spin()+' Saving…'; s.textContent='Syncing to Salesforce…'; setTimeout(function(){ closeM('notes'); showToast('Visit notes saved to Dr. Morita’s contact record'); markDone('tc-log','ti-log'); setTimeout(function(){ b.disabled=false; b.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Save to Salesforce'; s.textContent=''; },400); },1400); }
+
+function refreshAll(){ var s=document.getElementById('rsv'); s.style.animation='spin 0.8s linear infinite'; setTimeout(function(){ s.style.animation=''; },1000); }
+
+// ── Agentforce Chat ───────────────────────────────────────────
+var chatOpen=false;
+var AGENT_RESPONSES={
+  "Prep me for my O'Brien visit":"<strong>Dr. Christine O&rsquo;Brien, MD</strong> &mdash; Internal Medicine. Visit at 9:45 AM today.<br><br>Key context: she raised concerns about <strong>injection site reactions</strong> at her last visit &mdash; updated talking points are cleared and in your content library. She&rsquo;s responded well to outcomes data and is on a <strong>growing engagement tier</strong>.<br><br>One open task: review those talking points before the call. Want me to pull them up?",
+  "Summarise my Morita visit":"Visit complete &#10003; <strong>Dr. Aaron Morita</strong>, Partners Healthcare (Oncology).<br><br>&bull; Phase III data reviewed &mdash; EU timeline queried, PD-L1 stratification requested<br>&bull; MSL routing initiated for MOA inquiry &mdash; Sarah Okafor, 48&ndash;72hr SLA<br>&bull; Phase III + EU summary queued for approved channel delivery<br>&bull; Competitor AE documented to PV &mdash; closed<br><br>Engagement: <strong>High</strong>. Anything else to log from this visit?",
+  "Any formulary updates today?":"Yes &mdash; <strong>Immunexis was added to BCBS IL Tier 2</strong> this week.<br><br>This affects <strong>4 HCPs</strong> on your list: Morita, O&rsquo;Brien, Reyes, and Nakamura (next week). Updated messaging is cleared and ready to use.<br><br>Want me to flag this in today&rsquo;s visit notes, or send the formulary summary to any of your HCPs?"
+};
+var FALLBACK="I&rsquo;m pulling that from your Agentforce Life Sciences data now&hellip;<br><br>Based on your current schedule and account context, I can help you prepare visit notes, surface approved content, route medical inquiries, or update your team. What would you like to do?";
+function toggleChat(){ chatOpen=!chatOpen; document.getElementById('chat-panel').classList.toggle('open',chatOpen); document.getElementById('ct-chev').classList.toggle('open',chatOpen); if(chatOpen){ setTimeout(function(){ document.getElementById('cp-input').focus(); },320); scrollMsgs(); } }
+function sendPrompt(btn,text){ document.getElementById('cp-prompts').style.display='none'; appendUser(text); showTyping(); setTimeout(function(){ removeTyping(); appendAgent(AGENT_RESPONSES[text]||FALLBACK); scrollMsgs(); },1600); }
+function sendChat(){ var inp=document.getElementById('cp-input'),text=inp.value.trim(); if(!text)return; inp.value=''; document.getElementById('cp-prompts').style.display='none'; appendUser(text); showTyping(); setTimeout(function(){ removeTyping(); appendAgent(AGENT_RESPONSES[text]||FALLBACK); scrollMsgs(); },1600); }
+function appendUser(t){ var m=document.getElementById('cp-messages'),d=document.createElement('div'); d.className='msg-user'; d.innerHTML='<div class="msg-user-bubble">'+escHtml(t)+'</div>'; m.appendChild(d); scrollMsgs(); }
+function appendAgent(html){ var m=document.getElementById('cp-messages'),d=document.createElement('div'); d.className='msg-agent'; d.innerHTML='<div class="msg-agent-av">'+helixSVG()+'</div><div class="msg-agent-bubble">'+html+'</div>'; m.appendChild(d); }
+function showTyping(){ var m=document.getElementById('cp-messages'),d=document.createElement('div'); d.className='msg-typing'; d.id='typing-indicator'; d.innerHTML='<div class="msg-agent-av">'+helixSVG()+'</div><div class="typing-dots"><span></span><span></span><span></span></div>'; m.appendChild(d); scrollMsgs(); }
+function removeTyping(){ var t=document.getElementById('typing-indicator'); if(t)t.remove(); }
+function scrollMsgs(){ var m=document.getElementById('cp-messages'); setTimeout(function(){ m.scrollTop=m.scrollHeight; },50); }
+function helixSVG(){ return '<svg viewBox="0 0 14 18" fill="none" style="width:12px;height:15px"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/></svg>'; }
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+</script>
+</body>
+</html>
