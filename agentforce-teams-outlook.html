@@ -42,7 +42,7 @@ body {
   font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
   background: #111;
   display: flex; flex-direction: column;
-  min-height: 100vh;
+  height: 100vh;
   overflow: hidden;
 }
 
@@ -80,6 +80,7 @@ body {
   flex: 1;
   display: none;
   overflow: hidden;
+  min-height: 0;
 }
 .shell.active { display: flex; flex-direction: column; }
 
@@ -686,6 +687,66 @@ body {
 .o-reply-strip-footer { padding: 8px 16px 12px; display: flex; gap: 8px; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Responsive fixes ── */
+
+/* Ensure all flex column parents properly constrain children */
+.t-body, .o-body { min-height: 0; }
+.t-main, .o-reading { min-height: 0; flex: 1 1 0; }
+.t-messages { min-height: 0; }
+.o-email-body { min-height: 0; }
+.af-panel { min-height: 0; }
+.af-panel-body { min-height: 0; flex: 1 1 0; overflow-y: auto; }
+
+/* Outlook reply strip — always pinned, never cut off */
+.o-reply-strip { flex-shrink: 0; }
+.o-email-actions { flex-shrink: 0; }
+
+/* AF panel — scrollable body, actions always visible */
+.af-panel { display: flex; flex-direction: column; }
+.af-panel-actions { flex-shrink: 0; }
+
+/* ── Medium screens (1024px and below) ── */
+@media (max-width: 1024px) {
+  .t-channels { width: 180px; }
+  .o-folders  { width: 140px; }
+  .o-email-list { width: 220px; }
+  .af-panel.open { width: 300px; }
+}
+
+/* ── Small screens (768px and below) ── */
+@media (max-width: 768px) {
+  /* Teams: hide channel list, keep nav rail */
+  .t-channels { display: none; }
+  /* Outlook: hide folder tree */
+  .o-folders { display: none; }
+  /* AF panel overlays instead of pushing */
+  .af-panel {
+    position: absolute; right: 0; top: 0; bottom: 0; z-index: 50;
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+  }
+  .af-panel.open { width: 300px; }
+  /* Ribbon: wrap and reduce padding */
+  .o-ribbon { flex-wrap: wrap; padding: 4px 8px; gap: 2px; }
+  .o-ribbon-btn { min-width: 36px; padding: 3px 6px; }
+  /* Email list narrower */
+  .o-email-list { width: 180px; }
+  /* Teams input smaller */
+  .app-tab { padding: 6px 10px 7px; font-size: 11px; }
+}
+
+/* ── Very small screens (540px and below) ── */
+@media (max-width: 540px) {
+  .o-email-list { display: none; }
+  .t-nav { width: 44px; }
+  .t-nav-item { width: 36px; height: 36px; font-size: 7px; }
+  .af-panel.open { width: 100%; }
+  .app-tab span:last-child { display: none; } /* hide label, keep icon */
+  .t-channel-header-desc { display: none; }
+  .o-from-avatar { width: 28px; height: 28px; font-size: 10px; }
+  .modal { max-width: 100%; border-radius: 16px 16px 0 0; position: fixed; bottom: 0; left: 0; right: 0; max-height: 85vh; }
+  .overlay { align-items: flex-end; padding: 0; }
+}
 </style>
 </head>
 <body>

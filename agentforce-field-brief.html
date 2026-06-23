@@ -362,6 +362,20 @@ body {
 .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1A1A2E; color:white; border-radius:10px; padding:11px 18px; font-size:13px; font-weight:600; display:none; align-items:center; gap:8px; box-shadow:0 4px 20px rgba(45,5,104,0.3); z-index:300; white-space:nowrap; }
 @keyframes spin { to{transform:rotate(360deg)} }
 
+/* ── Responsive ── */
+@media (max-width: 540px) {
+  .page { padding: 12px 12px 48px; }
+  .chrome-sub { display: none; }
+  .greeting-card { padding: 16px 16px 14px; }
+  .g-greeting { font-size: 17px; }
+  .pc-eng-score { font-size: 15px; }
+  .actions-grid { grid-template-columns: 1fr 1fr; }
+  .act-btn.act-primary { grid-column: span 2; }
+  .modal { max-width: 100%; border-radius: 16px 16px 0 0; position: fixed; bottom: 0; left: 0; right: 0; max-height: 85vh; }
+  .overlay { align-items: flex-end; padding: 0; }
+  .chat-panel, .chat-trigger { max-width: 100%; border-radius: 12px 12px 0 0; }
+}
+
 /* ══ Agentforce Chat ══════════════════════════════════════════ */
 .chat-bar-wrap {
   position: fixed; bottom: 0; left: 0; right: 0; z-index: 150;
