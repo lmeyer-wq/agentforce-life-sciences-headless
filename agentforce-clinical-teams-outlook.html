@@ -188,9 +188,14 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 .af-panel-section{display:none;}
 .af-panel-section.active{display:block;}
 
-.af-row{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--panel-border);}
+.af-row{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--panel-border);cursor:pointer;transition:background 0.12s;}
 .af-row:last-child{border-bottom:none;}
 .af-row:hover{background:#F3F2FF;}
+.stage-item{cursor:default;}
+.stage-action{cursor:pointer;}
+.stage-action:hover{text-decoration:underline;}
+.elig-item{cursor:default;}
+.t-channel{transition:background 0.12s;}
 .af-row-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;}
 .af-row-content{flex:1;min-width:0;}
 .af-row-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:2px;}
@@ -338,22 +343,22 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
     <div class="t-channels">
       <div class="t-team-header"><div class="t-team-icon">RA</div>RA-5698755 Trial</div>
       <div class="t-section-label">Channels</div>
-      <div class="t-channel">&#35; General</div>
-      <div class="t-channel active">&#35; Recruitment &amp; Enrollment <span class="t-channel-unread">3</span></div>
-      <div class="t-channel">&#35; Site Coordinators</div>
-      <div class="t-channel">&#35; Medical Affairs</div>
-      <div class="t-channel">&#35; Compliance &amp; Audit</div>
-      <div class="t-channel">&#35; PV / SAE Reporting</div>
+      <div class="t-channel" onclick="selectChannel(this,'General','RA-5698755 &middot; team-wide announcements')">&#35; General</div>
+      <div class="t-channel active" onclick="selectChannel(this,'Recruitment &amp; Enrollment','RA-5698755 &middot; Cumulus Clinic + Makana Pharma')">&#35; Recruitment &amp; Enrollment <span class="t-channel-unread">3</span></div>
+      <div class="t-channel" onclick="selectChannel(this,'Site Coordinators','Cross-site coordinator discussion')">&#35; Site Coordinators</div>
+      <div class="t-channel" onclick="selectChannel(this,'Medical Affairs','MSL routing &amp; medical inquiries')">&#35; Medical Affairs</div>
+      <div class="t-channel" onclick="selectChannel(this,'Compliance &amp; Audit','21 CFR Part 11 &middot; audit findings')">&#35; Compliance &amp; Audit</div>
+      <div class="t-channel" onclick="selectChannel(this,'PV / SAE Reporting','Adverse event intake &amp; routing')">&#35; PV / SAE Reporting</div>
       <div class="t-section-label" style="margin-top:8px">Direct</div>
-      <div class="t-channel">&#128100; Lucas Brooks</div>
-      <div class="t-channel">&#128100; Dr. Patel (PI)</div>
+      <div class="t-channel" onclick="selectChannel(this,'Lucas Brooks','Direct message')">&#128100; Lucas Brooks</div>
+      <div class="t-channel" onclick="selectChannel(this,'Dr. Patel (PI)','Direct message')">&#128100; Dr. Patel (PI)</div>
     </div>
 
     <div class="t-main">
       <div class="t-channel-header">
         <span style="color:#888;font-size:15px">#</span>
-        <span class="t-channel-header-name">Recruitment &amp; Enrollment</span>
-        <span class="t-channel-header-desc">RA-5698755 &middot; Cumulus Clinic + Makana Pharma</span>
+        <span class="t-channel-header-name" id="t-ch-name">Recruitment &amp; Enrollment</span>
+        <span class="t-channel-header-desc" id="t-ch-desc">RA-5698755 &middot; Cumulus Clinic + Makana Pharma</span>
         <div class="t-header-actions">
           <button class="t-h-btn af-btn" onclick="togglePanel('teams')">
             <svg width="12" height="14" viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
@@ -517,7 +522,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
               </div>
               <span class="af-status s-pending">Action</span>
             </div>
-            <div class="stage-item">
+            <div class="stage-item" onclick="lockedStage(3)">
               <div class="stage-dot"></div>
               <div class="stage-content">
                 <div class="stage-name">3. eConsent Delivery</div>
@@ -525,7 +530,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
               </div>
               <span class="af-status s-closed">Locked</span>
             </div>
-            <div class="stage-item">
+            <div class="stage-item" onclick="lockedStage(4)">
               <div class="stage-dot"></div>
               <div class="stage-content">
                 <div class="stage-name">4. eConsent Verification</div>
@@ -533,7 +538,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
               </div>
               <span class="af-status s-closed">Locked</span>
             </div>
-            <div class="stage-item">
+            <div class="stage-item" onclick="lockedStage(5)">
               <div class="stage-dot"></div>
               <div class="stage-content">
                 <div class="stage-name">5. Screening Visit</div>
@@ -541,7 +546,7 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
               </div>
               <span class="af-status s-closed">Locked</span>
             </div>
-            <div class="stage-item">
+            <div class="stage-item" onclick="lockedStage(6)">
               <div class="stage-dot"></div>
               <div class="stage-content">
                 <div class="stage-name">6. Randomization &amp; Enrollment</div>
@@ -572,10 +577,10 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
         <!-- Engage tab — communications log -->
         <div class="af-panel-section" id="tab-engage">
           <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);">Engagement Journey</div>
-          <div class="af-row"><div class="af-row-icon" style="background:#EFF6FF">&#9993;&#65039;</div><div class="af-row-content"><div class="af-row-label">Welcome Email</div><div class="af-row-text">Sent automatically on registration &middot; IRB-approved template</div></div><span class="af-status s-live">Delivered</span></div>
-          <div class="af-row"><div class="af-row-icon" style="background:#F0ECFF">&#128241;</div><div class="af-row-content"><div class="af-row-label">SMS Preference Check</div><div class="af-row-text">Sarah opted-in to email + SMS for visit reminders</div></div><span class="af-status s-live">Opted-in</span></div>
-          <div class="af-row"><div class="af-row-icon" style="background:#FFFBEB">&#128227;</div><div class="af-row-content"><div class="af-row-label">eConsent Reminder Sequence</div><div class="af-row-text">Pre-defined journey &middot; only triggered after Stage 3 unlocks</div></div><span class="af-status s-pending">Queued</span></div>
-          <div class="af-row"><div class="af-row-icon" style="background:#F0FDF4">&#128173;</div><div class="af-row-content"><div class="af-row-label">In-portal Chat</div><div class="af-row-text">Agent-assisted FAQ &middot; medical questions routed to human MSL</div></div><span class="af-status s-live">Available</span></div>
+          <div class="af-row" onclick="showToast('Welcome email opened in Sarah&rsquo;s engagement timeline')"><div class="af-row-icon" style="background:#EFF6FF">&#9993;&#65039;</div><div class="af-row-content"><div class="af-row-label">Welcome Email</div><div class="af-row-text">Sent automatically on registration &middot; IRB-approved template</div></div><span class="af-status s-live">Delivered</span></div>
+          <div class="af-row" onclick="showToast('Communication preferences: Email + SMS')"><div class="af-row-icon" style="background:#F0ECFF">&#128241;</div><div class="af-row-content"><div class="af-row-label">SMS Preference Check</div><div class="af-row-text">Sarah opted-in to email + SMS for visit reminders</div></div><span class="af-status s-live">Opted-in</span></div>
+          <div class="af-row" onclick="showToast('Reminder sequence is locked — Stage 3 not yet unlocked')"><div class="af-row-icon" style="background:#FFFBEB">&#128227;</div><div class="af-row-content"><div class="af-row-label">eConsent Reminder Sequence</div><div class="af-row-text">Pre-defined journey &middot; only triggered after Stage 3 unlocks</div></div><span class="af-status s-pending">Queued</span></div>
+          <div class="af-row" onclick="showToast('Portal chat available — agent-assisted FAQ active')"><div class="af-row-icon" style="background:#F0FDF4">&#128173;</div><div class="af-row-content"><div class="af-row-label">In-portal Chat</div><div class="af-row-text">Agent-assisted FAQ &middot; medical questions routed to human MSL</div></div><span class="af-status s-live">Available</span></div>
         </div>
       </div>
 
@@ -633,24 +638,24 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="o-folder" style="padding-left:20px;font-size:11px;color:#888;">&#128193; IRB / Compliance</div>
     </div>
 
-    <div class="o-email-list">
+    <div class="o-email-list" id="o-email-list">
       <div class="o-email-list-header">Inbox</div>
-      <div class="o-email-item active">
+      <div class="o-email-item active" data-email="sarah" onclick="selectEmail(this,'sarah')">
         <div class="o-email-sender"><span>Sarah Taylor</span><span class="o-email-time">11:14 AM</span></div>
         <div class="o-email-subject">Re: Question about my screening visit</div>
         <div class="o-email-preview">Hi Zayn &mdash; quick question about transportation for next Tuesday...</div>
       </div>
-      <div class="o-email-item unread">
+      <div class="o-email-item unread" data-email="agentforce" onclick="selectEmail(this,'agentforce')">
         <div class="o-email-sender"><span style="display:flex;align-items:center;gap:6px;"><span class="o-unread-dot"></span>Agentforce Life Sciences</span><span class="o-email-time">10:38 AM</span></div>
         <div class="o-email-subject">eConsent verification complete &mdash; Sarah Taylor</div>
         <div class="o-email-preview">Sarah's signed IC has been verified in eSource. Source: Makana eConsent app. Date stamp:...</div>
       </div>
-      <div class="o-email-item unread">
+      <div class="o-email-item unread" data-email="lucas" onclick="selectEmail(this,'lucas')">
         <div class="o-email-sender"><span style="display:flex;align-items:center;gap:6px;"><span class="o-unread-dot"></span>Lucas Brooks</span><span class="o-email-time">9:02 AM</span></div>
         <div class="o-email-subject">Weekly recruitment metrics &mdash; RA-5698755</div>
         <div class="o-email-preview">Hi Zayn, sharing this week's enrollment funnel performance...</div>
       </div>
-      <div class="o-email-item">
+      <div class="o-email-item" data-email="irb" onclick="selectEmail(this,'irb')">
         <div class="o-email-sender"><span>IRB Office</span><span class="o-email-time">Yesterday</span></div>
         <div class="o-email-subject">Approved patient-facing content &mdash; v2.3</div>
         <div class="o-email-preview">The updated patient education materials have been IRB-approved...</div>
@@ -659,17 +664,17 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
 
     <div class="o-reading">
       <div class="o-email-header">
-        <div class="o-email-subject-line">Re: Question about my screening visit</div>
+        <div class="o-email-subject-line" id="o-subject">Re: Question about my screening visit</div>
         <div class="o-email-from">
-          <div class="o-from-avatar">ST</div>
+          <div class="o-from-avatar" id="o-avatar">ST</div>
           <div>
-            <div class="o-from-name">Sarah Taylor <span style="font-weight:400;color:#888;">&lt;sarah.taylor@example.com&gt;</span></div>
-            <div class="o-from-email">To: Zayn Holland</div>
+            <div class="o-from-name" id="o-fromname">Sarah Taylor <span style="font-weight:400;color:#888;" id="o-fromemail">&lt;sarah.taylor@example.com&gt;</span></div>
+            <div class="o-from-email" id="o-toline">To: Zayn Holland</div>
           </div>
-          <div style="margin-left:auto;"><div class="o-email-meta">Today, 11:14 AM</div></div>
+          <div style="margin-left:auto;"><div class="o-email-meta" id="o-time">Today, 11:14 AM</div></div>
         </div>
       </div>
-      <div class="o-email-body">
+      <div class="o-email-body" id="o-body">
         <p>Hi Zayn,</p>
         <p>Thank you for the welcome email and the portal access &mdash; I was able to sign the eConsent forms last night without any trouble. Really appreciated the clear walkthrough.</p>
         <p>One quick question before my screening visit on Tuesday: my car will be in the shop that week. Is there any transportation assistance available, or should I plan to arrange my own ride?</p>
@@ -678,8 +683,8 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       </div>
       <div class="o-email-actions">
         <button class="o-action-btn primary" onclick="togglePanel('outlook')">&#129504; Agentforce Reply</button>
-        <button class="o-action-btn">&#8617; Reply</button>
-        <button class="o-action-btn">&#128203; Log to Salesforce</button>
+        <button class="o-action-btn" onclick="showToast('Reply window opened')">&#8617; Reply</button>
+        <button class="o-action-btn" onclick="showToast('Email logged to contact record')">&#128203; Log to Salesforce</button>
       </div>
     </div>
 
@@ -705,9 +710,9 @@ body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;backgrou
       <div class="af-panel-body">
         <div class="af-panel-section active" id="o-tab-detected">
           <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);">Agent detected 2 items requiring action</div>
-          <div class="af-row"><div class="af-row-icon" style="background:#F0FDF4">&#128670;</div><div class="af-row-content"><div class="af-row-label">Service Request</div><div class="af-row-text"><em>Transportation assistance</em> for screening visit &mdash; eligible per participant services policy</div></div><span class="af-status s-queued">Action</span></div>
-          <div class="af-row"><div class="af-row-icon" style="background:#FEF2F2">&#9888;&#65039;</div><div class="af-row-content"><div class="af-row-label">Potential AE Disclosure</div><div class="af-row-text"><em>Competitor product allergic reaction</em> &mdash; must route to PV within 24hrs per protocol</div></div><span class="af-status s-blocked">Required</span></div>
-          <div class="af-row"><div class="af-row-icon" style="background:#F0ECFF">&#128221;</div><div class="af-row-content"><div class="af-row-label">eConsent Status</div><div class="af-row-text">Signed and verified &mdash; Stage 3 complete &mdash; screening unlocked</div></div><span class="af-status s-live">Verified</span></div>
+          <div class="af-row" onclick="openModal('voucher')"><div class="af-row-icon" style="background:#F0FDF4">&#128670;</div><div class="af-row-content"><div class="af-row-label">Service Request</div><div class="af-row-text"><em>Transportation assistance</em> for screening visit &mdash; eligible per participant services policy</div></div><span class="af-status s-queued">Action</span></div>
+          <div class="af-row" onclick="openModal('pv')"><div class="af-row-icon" style="background:#FEF2F2">&#9888;&#65039;</div><div class="af-row-content"><div class="af-row-label">Potential AE Disclosure</div><div class="af-row-text"><em>Competitor product allergic reaction</em> &mdash; must route to PV within 24hrs per protocol</div></div><span class="af-status s-blocked">Required</span></div>
+          <div class="af-row" onclick="showToast('eConsent verified in eSource &middot; Stage 3 complete')"><div class="af-row-icon" style="background:#F0ECFF">&#128221;</div><div class="af-row-content"><div class="af-row-label">eConsent Status</div><div class="af-row-text">Signed and verified &mdash; Stage 3 complete &mdash; screening unlocked</div></div><span class="af-status s-live">Verified</span></div>
         </div>
         <div class="af-panel-section" id="o-tab-reply">
           <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);">Suggested reply &mdash; IRB-approved language</div>
@@ -1015,6 +1020,117 @@ function doTeam(){
     msgs.scrollTop=msgs.scrollHeight;
     showToast('Update posted to #Recruitment & Enrollment');
   });
+}
+
+// ── Outlook: email switching ───────────────────────────────
+var EMAILS = {
+  sarah: {
+    subject: 'Re: Question about my screening visit',
+    avatar: 'ST', avatarColor: '#7040C0',
+    fromName: 'Sarah Taylor',
+    fromEmail: '&lt;sarah.taylor@example.com&gt;',
+    toLine: 'To: Zayn Holland',
+    time: 'Today, 11:14 AM',
+    body: '<p>Hi Zayn,</p>'+
+          '<p>Thank you for the welcome email and the portal access &mdash; I was able to sign the eConsent forms last night without any trouble. Really appreciated the clear walkthrough.</p>'+
+          '<p>One quick question before my screening visit on Tuesday: my car will be in the shop that week. Is there any transportation assistance available, or should I plan to arrange my own ride?</p>'+
+          '<p>Also &mdash; I wanted to mention something. About six months ago I had what I think was a mild allergic reaction to a competitor product my previous rheumatologist prescribed. It wasn\'t serious but I want to make sure it\'s on record.</p>'+
+          '<p>Thanks again,<br/><strong>Sarah Taylor</strong></p>'
+  },
+  agentforce: {
+    subject: 'eConsent verification complete — Sarah Taylor',
+    avatar: 'AF', avatarColor: '#7040C0',
+    fromName: 'Agentforce Life Sciences',
+    fromEmail: '&lt;noreply@agentforce.makana.com&gt;',
+    toLine: 'To: Zayn Holland',
+    time: 'Today, 10:38 AM',
+    body: '<p>Hi Zayn,</p>'+
+          '<p>This is an automated notification confirming that <strong>Sarah Taylor\'s</strong> eConsent has been signed and verified in the Makana eSource system.</p>'+
+          '<p><strong>Verification details:</strong></p>'+
+          '<ol>'+
+          '<li>Document: Informed Consent v3.2 (IRB-approved 2026-04-12)</li>'+
+          '<li>Signed: Yesterday at 7:48 PM ET</li>'+
+          '<li>Verified by: Makana eConsent application (auto-sync)</li>'+
+          '<li>Audit ID: IC-2026-0612-00214</li>'+
+          '</ol>'+
+          '<p><strong>What\'s unlocked:</strong> Stage 4 (eConsent Verification) is now complete. Stage 5 (Screening Visit) procedures can now begin. Per protocol section 4.2, no procedures should occur before this point — that condition is now satisfied.</p>'+
+          '<p>No action required. This event has been logged to Sarah\'s contact record and the trial audit trail.</p>'+
+          '<p>Best,<br/><strong>Agentforce Life Sciences</strong></p>'
+  },
+  lucas: {
+    subject: 'Weekly recruitment metrics — RA-5698755',
+    avatar: 'LB', avatarColor: '#1E40AF',
+    fromName: 'Lucas Brooks',
+    fromEmail: '&lt;lucas.brooks@makanapharma.com&gt;',
+    toLine: 'To: Zayn Holland · CC: Trial Steering Committee',
+    time: 'Today, 9:02 AM',
+    body: '<p>Hi Zayn,</p>'+
+          '<p>Sharing this week\'s recruitment funnel performance for RA-5698755. Good week overall — we hit the weekly enrollment target.</p>'+
+          '<p><strong>Funnel snapshot (week of Jun 8):</strong></p>'+
+          '<ol>'+
+          '<li><strong>Ad impressions:</strong> 2.1M (Google + Meta segments)</li>'+
+          '<li><strong>Portal visits:</strong> 4,820</li>'+
+          '<li><strong>Pre-screened:</strong> 312</li>'+
+          '<li><strong>Eligible referrals to sites:</strong> 47</li>'+
+          '<li><strong>Consented &amp; enrolled:</strong> 9</li>'+
+          '</ol>'+
+          '<p>Cumulus Clinic continues to outperform on conversion from referral to consented — currently 38% vs network average of 24%. Great work from your team.</p>'+
+          '<p>Couple of asks: (1) if you have any patterns on what\'s driving Cumulus\'s conversion advantage, I\'d love to share with other sites. (2) Segment Analytics shows our 50–60 demographic underperforming. I\'m adjusting the creative this week.</p>'+
+          '<p>Best,<br/><strong>Lucas Brooks</strong><br/>Recruitment Strategist · Makana Pharma</p>'
+  },
+  irb: {
+    subject: 'Approved patient-facing content — v2.3',
+    avatar: 'IR', avatarColor: '#15803D',
+    fromName: 'IRB Office',
+    fromEmail: '&lt;irb-office@makanapharma.com&gt;',
+    toLine: 'To: All RA-5698755 site coordinators',
+    time: 'Yesterday, 4:15 PM',
+    body: '<p>Dear coordinators,</p>'+
+          '<p>The IRB has approved version 2.3 of the patient-facing materials for RA-5698755. These materials are now <strong>available in the Makana Content Library</strong> and have been auto-pushed to the Agentforce approved content workspace.</p>'+
+          '<p><strong>Updated materials:</strong></p>'+
+          '<ol>'+
+          '<li>Trial overview brochure (English + Spanish)</li>'+
+          '<li>Visit-by-visit expectations guide</li>'+
+          '<li>Injection site reaction guidance (updated talking points)</li>'+
+          '<li>FAQ document</li>'+
+          '</ol>'+
+          '<p><strong>Action required:</strong> Please stop using any previous versions (v2.2 and earlier) effective immediately. Agentforce will only surface approved v2.3 materials going forward.</p>'+
+          '<p>Reminder: all participant-facing communications must use IRB-approved content only. Any deviation should be reported to the IRB office within 1 business day.</p>'+
+          '<p>Regards,<br/><strong>IRB Office</strong><br/>Makana Pharma · IRB-2026-RA-001</p>'
+  }
+};
+
+function selectEmail(el, key){
+  document.querySelectorAll('.o-email-item').forEach(e=>e.classList.remove('active'));
+  el.classList.add('active');
+  el.classList.remove('unread'); // mark read
+  var dot = el.querySelector('.o-unread-dot');
+  if(dot) dot.style.display='none';
+  var d = EMAILS[key];
+  document.getElementById('o-subject').textContent = d.subject;
+  document.getElementById('o-avatar').textContent = d.avatar;
+  document.getElementById('o-avatar').style.background = d.avatarColor;
+  document.getElementById('o-fromname').innerHTML = d.fromName + ' <span style="font-weight:400;color:#888;">' + d.fromEmail + '</span>';
+  document.getElementById('o-toline').textContent = d.toLine;
+  document.getElementById('o-time').textContent = d.time;
+  document.getElementById('o-body').innerHTML = d.body;
+}
+
+// ── Teams: channel switching ───────────────────────────────
+function selectChannel(el, name, desc){
+  document.querySelectorAll('.t-channel').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('t-ch-name').innerHTML = name;
+  document.getElementById('t-ch-desc').innerHTML = desc;
+  // Clear unread badge
+  var badge = el.querySelector('.t-channel-unread');
+  if(badge) badge.remove();
+  showToast('Switched to ' + name.replace(/&amp;/g,'&'));
+}
+
+// ── Locked stage feedback ──────────────────────────────────
+function lockedStage(n){
+  showToast('Stage ' + n + ' locked — earlier stages must complete first (protocol section 4.2)');
 }
 
 setTimeout(function(){togglePanel('teams');},400);
