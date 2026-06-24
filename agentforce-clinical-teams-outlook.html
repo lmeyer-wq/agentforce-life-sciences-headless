@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agentforce Life Sciences — Clinical Trials</title>
+<style>
+:root {
+  color-scheme: light;
+  --t-nav:#201F55; --t-nav-hover:#2D2C6E; --t-active:#6264A7;
+  --t-topbar:#201F55; --t-channels:#2D2C5E;
+  --t-sidebar-text:rgba(255,255,255,0.72);
+  --t-sidebar-active:rgba(255,255,255,0.12);
+  --o-nav:#0F4A8A; --o-bar:#1467C6; --o-hover:#105CBF;
+  --panel-bg:#FAFAF8; --panel-border:#E8E6E1;
+  --afls-dark:#2D0568; --afls-mid:#5830A0; --afls-viv:#7040C0;
+  --afls-lit:#F0ECFF; --afls-bdr:#D8CCFF;
+  --purple:#7040C0; --purple-light:#F0ECFF;
+  --blue:#3B82F6; --blue-light:#EFF6FF;
+  --green:#22C55E; --green-light:#F0FDF4;
+  --amber:#F59E0B; --amber-light:#FFFBEB;
+  --red:#EF4444; --red-light:#FEF2F2;
+  --text:#1A1A1A; --text-2:#6B6B6B; --text-3:#9B9898;
+  --border:#E8E6E1;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',-apple-system,BlinkMacSystemFont,sans-serif;background:#111;display:flex;flex-direction:column;height:100vh;overflow:hidden;}
+
+/* ── App switcher ── */
+.app-switcher{background:#1A1A1A;display:flex;align-items:center;padding:10px 16px 0;border-bottom:1px solid #333;flex-shrink:0;}
+.app-tab{display:flex;align-items:center;gap:7px;padding:8px 16px 9px;border-radius:8px 8px 0 0;font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;border-bottom:none;color:#888;transition:all 0.15s;margin-right:2px;}
+.app-tab:hover{color:#ccc;background:#2A2A2A;}
+.app-tab.active{background:white;color:#1A1A1A;border-color:#444;border-bottom-color:white;}
+
+/* ── Shell ── */
+.shell{flex:1;display:none;overflow:hidden;min-height:0;}
+.shell.active{display:flex;flex-direction:column;}
+
+/* ════ TEAMS ════ */
+.teams-shell{background:white;}
+.t-topbar{background:var(--t-topbar);height:48px;display:flex;align-items:center;padding:0 12px;gap:10px;flex-shrink:0;}
+.t-logo{display:flex;align-items:center;gap:8px;color:white;font-size:13px;font-weight:600;margin-right:4px;}
+.t-search{flex:1;max-width:480px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.15);border-radius:4px;height:28px;padding:0 10px;color:rgba(255,255,255,0.6);font-size:12px;display:flex;align-items:center;gap:6px;}
+.t-topbar-actions{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.t-icon-btn{width:32px;height:32px;border-radius:4px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.7);display:flex;align-items:center;justify-content:center;}
+.t-icon-btn:hover{background:rgba(255,255,255,0.1);}
+.t-avatar{width:28px;height:28px;border-radius:50%;background:#6264A7;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;flex-shrink:0;}
+
+.t-body{flex:1;display:flex;overflow:hidden;min-height:0;}
+.t-nav{width:56px;background:var(--t-nav);display:flex;flex-direction:column;align-items:center;padding:6px 0;gap:2px;flex-shrink:0;}
+.t-nav-item{width:40px;height:40px;border-radius:6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;color:var(--t-sidebar-text);font-size:8px;font-weight:600;gap:2px;position:relative;}
+.t-nav-item:hover{background:var(--t-nav-hover);color:white;}
+.t-nav-item.active{color:white;}
+.t-nav-item.active::before{content:'';position:absolute;left:-4px;top:50%;transform:translateY(-50%);width:3px;height:20px;background:white;border-radius:0 3px 3px 0;}
+.t-nav-item svg{width:20px;height:20px;}
+.t-nav-badge{position:absolute;top:4px;right:4px;width:14px;height:14px;border-radius:50%;background:#EF4444;color:white;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.t-nav-spacer{flex:1;}
+.t-nav-af{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,#2D0568,#7040C0);display:flex;align-items:center;justify-content:center;cursor:pointer;margin:4px 0;border:2px solid transparent;}
+.t-nav-af:hover{border-color:rgba(255,255,255,0.3);}
+.t-nav-af.panel-open{border-color:rgba(255,255,255,0.6);box-shadow:0 0 0 2px rgba(112,64,192,0.5);}
+
+.t-channels{width:230px;background:var(--t-channels);display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0;}
+.t-team-header{padding:14px 12px 6px;font-size:13px;font-weight:700;color:white;display:flex;align-items:center;gap:6px;}
+.t-team-icon{width:22px;height:22px;border-radius:5px;background:var(--t-active);display:flex;align-items:center;justify-content:center;font-size:10px;color:white;font-weight:800;}
+.t-channel{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 28px;font-size:12px;color:var(--t-sidebar-text);cursor:pointer;border-radius:4px;margin:1px 6px;}
+.t-channel:hover{background:var(--t-sidebar-active);color:white;}
+.t-channel.active{background:var(--t-sidebar-active);color:white;font-weight:600;}
+.t-channel-unread{margin-left:auto;font-size:10px;font-weight:700;background:white;color:var(--t-nav);border-radius:10px;padding:0 5px;}
+.t-section-label{padding:12px 12px 4px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;color:rgba(255,255,255,0.4);}
+
+.t-main{flex:1;display:flex;flex-direction:column;overflow:hidden;background:white;min-height:0;}
+.t-channel-header{height:48px;border-bottom:1px solid #E5E5E5;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;}
+.t-channel-header-name{font-size:15px;font-weight:700;}
+.t-channel-header-desc{font-size:12px;color:#888;margin-left:4px;}
+.t-header-actions{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.t-h-btn{height:28px;padding:0 10px;border-radius:4px;border:1px solid #ddd;background:white;font-size:12px;font-weight:600;color:#444;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.t-h-btn:hover{background:#F5F5F5;}
+.t-h-btn.af-btn{background:linear-gradient(135deg,#2D0568,#7040C0);color:white;border-color:transparent;}
+.t-h-btn.af-btn:hover{opacity:0.9;}
+
+.t-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:4px;min-height:0;}
+.t-date-divider{text-align:center;font-size:11px;color:#888;display:flex;align-items:center;gap:10px;margin:12px 0 8px;}
+.t-date-divider::before,.t-date-divider::after{content:'';flex:1;height:1px;background:#E5E5E5;}
+.t-msg{display:flex;gap:10px;padding:6px 0;}
+.t-msg:hover{background:#F9F9F9;border-radius:6px;padding-left:6px;margin-left:-6px;}
+.t-msg-avatar{width:32px;height:32px;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white;margin-top:2px;}
+.t-msg-body{flex:1;min-width:0;}
+.t-msg-header{display:flex;align-items:baseline;gap:8px;margin-bottom:2px;}
+.t-msg-name{font-size:13px;font-weight:700;}
+.t-msg-time{font-size:11px;color:#888;}
+.t-msg-role{font-size:10px;font-weight:600;color:#888;background:#F0F0F0;border-radius:3px;padding:0 5px;}
+.t-msg-text{font-size:13px;line-height:1.5;color:#1A1A1A;}
+.t-msg-text .mention{color:#6264A7;font-weight:600;}
+
+/* AF chat cards in conversation */
+.af-chat-card{background:white;border:1px solid #E5E5E5;border-left:3px solid var(--purple);border-radius:0 6px 6px 0;padding:10px 12px;margin-top:6px;max-width:460px;cursor:pointer;transition:box-shadow 0.15s;}
+.af-chat-card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.1);}
+.af-card-header{display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+.af-card-badge{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;background:linear-gradient(135deg,#2D0568,#7040C0);color:white;border-radius:3px;padding:2px 6px;}
+.af-card-title{font-size:13px;font-weight:700;}
+.af-card-rows{display:flex;flex-direction:column;gap:3px;}
+.af-card-row{font-size:12px;color:#444;display:flex;align-items:center;gap:6px;}
+.af-card-row .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.af-card-cta{margin-top:8px;padding-top:8px;border-top:1px solid #F0F0F0;font-size:11px;font-weight:700;color:var(--purple);display:flex;align-items:center;gap:4px;}
+
+/* Compliance gate banner */
+.compliance-banner{display:flex;align-items:center;gap:8px;background:#FFFBEB;border:1px solid #FCD34D;border-radius:5px;padding:7px 10px;margin-top:6px;max-width:460px;font-size:11px;color:#92400E;}
+.compliance-banner svg{width:14px;height:14px;flex-shrink:0;}
+.compliance-banner.success{background:#F0FDF4;border-color:#86EFAC;color:#15803D;}
+
+.t-input{border-top:1px solid #E5E5E5;padding:10px 16px;flex-shrink:0;}
+.t-input-box{border:1px solid #ddd;border-radius:6px;padding:8px 12px;font-size:13px;color:#888;display:flex;align-items:center;gap:8px;background:white;}
+
+.t-appbar{width:32px;background:#F0F0F0;border-left:1px solid #E0E0E0;display:flex;flex-direction:column;align-items:center;padding:8px 0;gap:4px;flex-shrink:0;}
+.t-appbar-af{width:26px;height:26px;border-radius:5px;background:linear-gradient(135deg,#2D0568,#7040C0);display:flex;align-items:center;justify-content:center;cursor:pointer;border:2px solid transparent;}
+.t-appbar-af.active{border-color:white;box-shadow:0 0 0 2px #7040C0;}
+
+/* ════ OUTLOOK ════ */
+.outlook-shell{background:white;}
+.o-topbar{background:var(--o-bar);height:44px;display:flex;align-items:center;padding:0 10px;gap:8px;flex-shrink:0;}
+.o-logo{display:flex;align-items:center;gap:7px;color:white;font-size:14px;font-weight:700;margin-right:8px;}
+.o-nav-pill{height:28px;padding:0 10px;background:rgba(255,255,255,0.12);border:none;border-radius:3px;color:white;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:4px;}
+.o-nav-pill:hover{background:rgba(255,255,255,0.2);}
+.o-nav-pill.active{background:rgba(255,255,255,0.25);}
+.o-topbar-right{margin-left:auto;display:flex;align-items:center;gap:6px;}
+.o-ribbon{background:#F9F9F9;border-bottom:1px solid #E0E0E0;display:flex;align-items:center;padding:4px 10px;gap:4px;flex-shrink:0;flex-wrap:wrap;}
+.o-ribbon-btn{display:flex;flex-direction:column;align-items:center;padding:4px 8px;border-radius:3px;background:none;border:none;cursor:pointer;font-size:9px;color:#444;gap:2px;min-width:44px;}
+.o-ribbon-btn:hover{background:#EBEBEB;}
+.o-ribbon-btn svg{width:18px;height:18px;color:#0078D4;}
+.o-ribbon-sep{width:1px;height:36px;background:#E0E0E0;margin:0 4px;}
+.o-af-btn{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:4px;background:linear-gradient(135deg,#2D0568,#7040C0);border:none;cursor:pointer;color:white;font-size:11px;font-weight:700;margin-left:auto;}
+
+.o-body{flex:1;display:flex;overflow:hidden;min-height:0;}
+.o-folders{width:180px;background:#F9F9F9;border-right:1px solid #E0E0E0;display:flex;flex-direction:column;padding:8px 0;flex-shrink:0;overflow-y:auto;}
+.o-folder{display:flex;align-items:center;gap:8px;padding:5px 12px;font-size:12px;color:#333;cursor:pointer;}
+.o-folder:hover{background:#EBEBEB;}
+.o-folder.active{background:#EEF3FB;color:#0078D4;font-weight:600;}
+.o-folder-count{margin-left:auto;font-size:10px;font-weight:700;color:#0078D4;}
+
+.o-email-list{width:260px;border-right:1px solid #E0E0E0;display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto;}
+.o-email-list-header{padding:10px 12px 6px;font-size:13px;font-weight:700;border-bottom:1px solid #F0F0F0;display:flex;align-items:center;justify-content:space-between;}
+.o-email-item{padding:10px 12px;border-bottom:1px solid #F5F5F5;cursor:pointer;display:flex;flex-direction:column;gap:2px;}
+.o-email-item:hover{background:#F5F5F5;}
+.o-email-item.active{background:#EEF3FB;border-left:3px solid #0078D4;padding-left:9px;}
+.o-email-item.unread .o-email-sender{font-weight:700;}
+.o-email-sender{font-size:12px;color:#1A1A1A;display:flex;align-items:center;justify-content:space-between;}
+.o-email-time{font-size:10px;color:#888;}
+.o-email-subject{font-size:11px;font-weight:600;color:#333;}
+.o-email-preview{font-size:11px;color:#888;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.o-unread-dot{width:7px;height:7px;border-radius:50%;background:#0078D4;flex-shrink:0;}
+
+.o-reading{flex:1;display:flex;flex-direction:column;overflow:hidden;background:white;min-height:0;flex:1 1 0;}
+.o-email-header{padding:16px 20px 12px;border-bottom:1px solid #F0F0F0;flex-shrink:0;}
+.o-email-subject-line{font-size:16px;font-weight:700;margin-bottom:10px;}
+.o-email-from{display:flex;align-items:center;gap:10px;}
+.o-from-avatar{width:34px;height:34px;border-radius:50%;background:#7040C0;color:white;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;}
+.o-from-name{font-size:13px;font-weight:600;}
+.o-from-email{font-size:11px;color:#888;}
+.o-email-meta{font-size:11px;color:#888;margin-top:4px;}
+.o-email-body{flex:1;overflow-y:auto;padding:16px 20px;font-size:13px;line-height:1.7;color:#1A1A1A;min-height:0;}
+.o-email-body p{margin-bottom:10px;}
+.o-email-body ol{padding-left:18px;display:flex;flex-direction:column;gap:8px;}
+.o-email-body strong{font-weight:700;}
+.o-email-actions{padding:10px 20px;border-top:1px solid #F0F0F0;display:flex;gap:8px;flex-shrink:0;}
+.o-action-btn{padding:6px 14px;border-radius:3px;border:1px solid #E0E0E0;background:white;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:5px;}
+.o-action-btn:hover{background:#F5F5F5;}
+.o-action-btn.primary{background:#0078D4;color:white;border-color:transparent;}
+
+/* ════ Agentforce Panel ════ */
+.af-panel{width:0;overflow:hidden;background:var(--panel-bg);border-left:1px solid var(--panel-border);display:flex;flex-direction:column;transition:width 0.28s cubic-bezier(0.4,0,0.2,1);flex-shrink:0;min-height:0;}
+.af-panel.open{width:360px;}
+.af-panel-header{background:linear-gradient(135deg,#2D0568 0%,#5030A0 55%,#7040C0 100%);padding:14px 14px 12px;flex-shrink:0;}
+.af-panel-title-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.af-panel-badge-row{display:flex;align-items:center;gap:6px;}
+.af-badge{display:inline-flex;align-items:center;gap:4px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:rgba(255,255,255,0.9);letter-spacing:0.5px;text-transform:uppercase;}
+.af-badge-dot{width:5px;height:5px;border-radius:50%;background:#A78BFA;}
+.af-compliant{display:inline-flex;align-items:center;gap:3px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:700;color:#86EFAC;letter-spacing:0.3px;}
+.af-panel-name{font-size:14px;font-weight:700;color:white;margin-top:4px;}
+.af-panel-sub{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px;display:flex;align-items:center;gap:5px;}
+.af-sub-dot{width:2px;height:2px;border-radius:50%;background:rgba(255,255,255,0.3);}
+.af-panel-close{width:24px;height:24px;border-radius:4px;background:rgba(255,255,255,0.1);border:none;cursor:pointer;color:rgba(255,255,255,0.6);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.af-panel-close:hover{background:rgba(255,255,255,0.2);color:white;}
+.af-panel-tabs{display:flex;border-bottom:1px solid var(--panel-border);flex-shrink:0;background:white;}
+.af-tab{flex:1;padding:9px 6px;font-size:11px;font-weight:600;color:var(--text-2);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;}
+.af-tab:hover{color:var(--purple);}
+.af-tab.active{color:var(--purple);border-bottom-color:var(--purple);}
+.af-panel-body{flex:1;overflow-y:auto;min-height:0;}
+.af-panel-section{display:none;}
+.af-panel-section.active{display:block;}
+
+.af-row{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--panel-border);}
+.af-row:last-child{border-bottom:none;}
+.af-row:hover{background:#F3F2FF;}
+.af-row-icon{width:24px;height:24px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;}
+.af-row-content{flex:1;min-width:0;}
+.af-row-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:2px;}
+.af-row-text{font-size:12px;color:var(--text);line-height:1.45;}
+.af-row-text em{font-style:normal;color:var(--purple);font-weight:600;}
+.af-status{font-size:9px;font-weight:700;padding:2px 7px;border-radius:20px;text-transform:uppercase;letter-spacing:0.3px;flex-shrink:0;margin-top:2px;align-self:flex-start;white-space:nowrap;}
+.s-live{background:var(--green-light);color:var(--green);}
+.s-pending{background:var(--amber-light);color:var(--amber);}
+.s-closed{background:#F0F0F0;color:#888;}
+.s-queued{background:var(--blue-light);color:var(--blue);}
+.s-high{background:var(--purple-light);color:var(--purple);}
+.s-blocked{background:var(--red-light);color:var(--red);}
+
+/* Enrollment stages */
+.stage-list{padding:6px 0;}
+.stage-item{padding:9px 14px 9px 38px;position:relative;display:flex;align-items:flex-start;gap:8px;border-bottom:1px solid var(--panel-border);}
+.stage-item:last-child{border-bottom:none;}
+.stage-dot{position:absolute;left:18px;top:14px;width:8px;height:8px;border-radius:50%;background:#D1D5DB;border:2px solid white;box-shadow:0 0 0 1.5px #D1D5DB;}
+.stage-item.done .stage-dot{background:var(--green);box-shadow:0 0 0 1.5px var(--green);}
+.stage-item.current .stage-dot{background:var(--purple);box-shadow:0 0 0 1.5px var(--purple);}
+.stage-item.blocked .stage-dot{background:var(--red);box-shadow:0 0 0 1.5px var(--red);}
+.stage-item::before{content:'';position:absolute;left:22px;top:24px;bottom:-10px;width:1.5px;background:#E5E5E5;}
+.stage-item:last-child::before{display:none;}
+.stage-content{flex:1;min-width:0;}
+.stage-name{font-size:12px;font-weight:600;color:var(--text);}
+.stage-meta{font-size:10px;color:var(--text-3);margin-top:2px;}
+.stage-item.done .stage-name{color:var(--text-3);}
+.stage-item.current .stage-name{color:var(--purple);}
+.stage-action{font-size:10px;color:var(--purple);font-weight:700;margin-top:3px;cursor:pointer;display:inline-flex;align-items:center;gap:3px;}
+
+/* Quick actions */
+.af-panel-actions{padding:10px 14px 12px;border-top:1px solid var(--panel-border);display:flex;flex-direction:column;gap:6px;flex-shrink:0;background:white;}
+.af-actions-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:2px;}
+.af-actions-row{display:flex;gap:6px;flex-wrap:wrap;}
+.af-qa{display:flex;align-items:center;gap:5px;padding:6px 11px;border-radius:20px;background:var(--panel-bg);border:1.5px solid var(--panel-border);font-size:11px;font-weight:600;color:var(--text-2);cursor:pointer;white-space:nowrap;}
+.af-qa:hover{border-color:var(--purple);color:var(--purple);background:var(--purple-light);}
+.af-qa.primary{background:var(--purple);color:white;border-color:var(--purple);}
+.af-qa.primary:hover{background:#5830A0;}
+
+/* ════ Modals ════ */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(45,5,104,0.4);z-index:500;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:white;border-radius:12px;box-shadow:0 8px 40px rgba(45,5,104,0.22);width:100%;max-width:560px;max-height:88vh;display:flex;flex-direction:column;overflow:hidden;animation:mp 0.18s ease;}
+@keyframes mp{from{opacity:0;transform:scale(0.96) translateY(8px);}to{opacity:1;transform:none;}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.modal-header-left{display:flex;align-items:center;gap:10px;}
+.modal-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.modal-title{font-size:14px;font-weight:700;}
+.modal-subtitle{font-size:11px;color:var(--text-3);margin-top:1px;}
+.modal-close{width:28px;height:28px;border-radius:6px;background:none;border:1.5px solid var(--border);cursor:pointer;color:var(--text-2);display:flex;align-items:center;justify-content:center;font-size:16px;line-height:1;}
+.modal-close:hover{background:#F5F5F5;}
+.modal-body{flex:1;overflow-y:auto;padding:14px 18px;}
+.modal-compliance{padding:9px 18px;background:#F0ECFF;border-top:1px solid #D8CCFF;border-bottom:1px solid #D8CCFF;font-size:11px;color:#5830A0;display:flex;align-items:center;gap:6px;flex-shrink:0;font-weight:600;}
+.modal-compliance svg{flex-shrink:0;}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.modal-footer-left{font-size:11px;color:var(--text-3);}
+.modal-footer-right{display:flex;gap:8px;}
+.btn{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;display:flex;align-items:center;gap:6px;}
+.btn-ghost{background:none;border:1.5px solid var(--border);color:var(--text-2);}
+.btn-ghost:hover{background:#F5F5F5;}
+.btn-purple{background:var(--purple);color:white;}
+.btn-purple:hover{background:#5830A0;}
+.btn-purple:disabled{background:#B0A8F5;cursor:default;}
+.btn-green{background:#22C55E;color:white;}
+.btn-green:hover{background:#16A34A;}
+.btn-amber{background:#F59E0B;color:white;}
+.btn-amber:hover{background:#D97706;}
+
+/* Candidate cards */
+.candidate-card{border:1.5px solid var(--border);border-radius:8px;padding:11px 12px;margin-bottom:8px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;}
+.candidate-card:hover{border-color:var(--afls-bdr);background:#FAF7FF;}
+.cand-chk{width:16px;height:16px;border-radius:4px;border:2px solid var(--border);flex-shrink:0;margin-top:2px;background:white;display:flex;align-items:center;justify-content:center;}
+.cand-chk.on{background:var(--purple);border-color:var(--purple);}
+.cand-chk.on::after{content:'';width:7px;height:4px;border-left:2px solid white;border-bottom:2px solid white;transform:rotate(-45deg) translateY(-1px);}
+.cand-info{flex:1;}
+.cand-name{font-size:13px;font-weight:700;display:flex;align-items:center;gap:7px;}
+.cand-id{font-size:10px;color:var(--text-3);font-weight:500;}
+.cand-meta{font-size:11px;color:var(--text-2);margin-top:3px;}
+.cand-match{display:flex;align-items:center;gap:5px;margin-top:4px;}
+.cand-score{font-size:11px;font-weight:700;padding:1px 8px;border-radius:20px;background:#F0FDF4;color:#15803D;}
+.cand-score.med{background:#FFFBEB;color:#B45309;}
+.cand-score.low{background:#FEF2F2;color:#EF4444;}
+.cand-notes{font-size:10px;color:var(--text-3);}
+
+/* Eligibility checklist */
+.elig-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.elig-item:last-child{border:none;}
+.elig-icon{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.elig-icon.ok{background:#F0FDF4;color:var(--green);}
+.elig-icon.fail{background:#FEF2F2;color:var(--red);}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#1A1A1A;color:white;border-radius:10px;padding:11px 18px;font-size:13px;font-weight:600;display:none;align-items:center;gap:8px;box-shadow:0 4px 20px rgba(0,0,0,0.25);z-index:2000;white-space:nowrap;}
+
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Responsive */
+.t-body,.o-body{min-height:0;}
+.t-main,.o-reading{min-height:0;flex:1 1 0;}
+@media (max-width:1024px){.t-channels{width:180px;}.o-folders{width:140px;}.o-email-list{width:220px;}.af-panel.open{width:300px;}}
+@media (max-width:768px){.t-channels,.o-folders{display:none;}.af-panel{position:absolute;right:0;top:0;bottom:0;z-index:50;}.af-panel.open{width:300px;}}
+@media (max-width:540px){.o-email-list{display:none;}.af-panel.open{width:100%;}.modal{max-width:100%;border-radius:16px 16px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:85vh;}.modal-overlay{align-items:flex-end;padding:0;}}
+</style>
+</head>
+<body>
+
+<!-- App switcher -->
+<div class="app-switcher">
+  <div class="app-tab active" id="tab-teams" onclick="switchApp('teams')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="11" height="11" rx="2" fill="#6264A7"/><rect x="11" y="10" width="11" height="11" rx="2" fill="#4B4B96"/><circle cx="17" cy="6" r="3" fill="#6264A7"/></svg>
+    Microsoft Teams
+  </div>
+  <div class="app-tab" id="tab-outlook" onclick="switchApp('outlook')">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" fill="#0078D4"/><path d="M2 8l10 6 10-6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+    Outlook
+  </div>
+</div>
+
+<!-- ════ TEAMS ════ -->
+<div class="shell teams-shell active" id="shell-teams">
+  <div class="t-topbar">
+    <div class="t-logo">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="3" width="11" height="11" rx="2" fill="rgba(255,255,255,0.9)"/><rect x="11" y="10" width="11" height="11" rx="2" fill="rgba(255,255,255,0.6)"/><circle cx="17" cy="6" r="3" fill="rgba(255,255,255,0.9)"/></svg>
+      Makana Pharma — Clinical Trials
+    </div>
+    <div class="t-search">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Search
+    </div>
+    <div class="t-topbar-actions"><div class="t-avatar">ZH</div></div>
+  </div>
+
+  <div class="t-body">
+    <nav class="t-nav">
+      <div class="t-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg><span>Activity</span><span class="t-nav-badge">5</span></div>
+      <div class="t-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Chat</span></div>
+      <div class="t-nav-item active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Teams</span></div>
+      <div class="t-nav-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span>Calendar</span></div>
+      <div class="t-nav-spacer"></div>
+      <div class="t-nav-af" id="t-nav-af" onclick="togglePanel('teams')">
+        <svg width="18" height="18" viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+    </nav>
+
+    <div class="t-channels">
+      <div class="t-team-header"><div class="t-team-icon">RA</div>RA-5698755 Trial</div>
+      <div class="t-section-label">Channels</div>
+      <div class="t-channel">&#35; General</div>
+      <div class="t-channel active">&#35; Recruitment &amp; Enrollment <span class="t-channel-unread">3</span></div>
+      <div class="t-channel">&#35; Site Coordinators</div>
+      <div class="t-channel">&#35; Medical Affairs</div>
+      <div class="t-channel">&#35; Compliance &amp; Audit</div>
+      <div class="t-channel">&#35; PV / SAE Reporting</div>
+      <div class="t-section-label" style="margin-top:8px">Direct</div>
+      <div class="t-channel">&#128100; Lucas Brooks</div>
+      <div class="t-channel">&#128100; Dr. Patel (PI)</div>
+    </div>
+
+    <div class="t-main">
+      <div class="t-channel-header">
+        <span style="color:#888;font-size:15px">#</span>
+        <span class="t-channel-header-name">Recruitment &amp; Enrollment</span>
+        <span class="t-channel-header-desc">RA-5698755 &middot; Cumulus Clinic + Makana Pharma</span>
+        <div class="t-header-actions">
+          <button class="t-h-btn af-btn" onclick="togglePanel('teams')">
+            <svg width="12" height="14" viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+            Agentforce
+          </button>
+        </div>
+      </div>
+
+      <div class="t-messages" id="t-messages">
+        <div class="t-date-divider">Yesterday</div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#1E40AF">LB</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header"><span class="t-msg-name">Lucas Brooks</span><span class="t-msg-role">Recruitment Strategist &middot; Makana</span><span class="t-msg-time">3:18 PM</span></div>
+            <div class="t-msg-text">Quick update: Google + Meta campaigns for RA-5698755 are live. Audience segment is built on unified consented data &mdash; 14,187 in target. Tracking inquiries through the Makana trial search portal. <span class="mention">@Zayn</span> expect referrals to start hitting Cumulus by tomorrow morning.</div>
+          </div>
+        </div>
+
+        <div class="t-date-divider">Today</div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#2D1B69;border-radius:6px;">
+            <svg width="16" height="20" viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div class="t-msg-body">
+            <div class="t-msg-header"><span class="t-msg-name" style="color:#7040C0;">Agentforce</span><span class="t-msg-role" style="background:#F0ECFF;color:#7040C0;">Life Sciences</span><span class="t-msg-time">7:42 AM</span></div>
+            <div class="t-msg-text">Morning Zayn &mdash; <strong>5 new candidates</strong> arrived overnight. I've completed auto-evaluation against trial inclusion/exclusion criteria. All recommendations require your human review before any candidate progresses.</div>
+            <div class="af-chat-card" onclick="openModal('candidates')">
+              <div class="af-card-header"><span class="af-card-badge">Agentforce</span><span class="af-card-title">Candidate Auto-matching &mdash; RA-5698755</span></div>
+              <div class="af-card-rows">
+                <div class="af-card-row"><span class="dot" style="background:#22C55E"></span>3 candidates &mdash; <strong>strong match</strong> (incl. Sarah Taylor)</div>
+                <div class="af-card-row"><span class="dot" style="background:#F59E0B"></span>1 candidate &mdash; needs additional screening</div>
+                <div class="af-card-row"><span class="dot" style="background:#EF4444"></span>1 candidate &mdash; exclusion criteria triggered</div>
+              </div>
+              <div class="af-card-cta">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+                Review &amp; verify matches
+              </div>
+            </div>
+            <div class="compliance-banner">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+              AI recommendations require coordinator verification before any candidate is contacted or enrolled
+            </div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#6264A7">ZH</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header"><span class="t-msg-name">Zayn Holland</span><span class="t-msg-role">Site Coordinator &middot; Cumulus Clinic</span><span class="t-msg-time">8:15 AM</span></div>
+            <div class="t-msg-text">Thanks. Reviewing Sarah Taylor's record now &mdash; her pre-screening responses look clean (age 50, female, no autoimmune comorbidities, no prior trial enrollment). Will accept her referral and kick off the structured enrollment plan.</div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#2D1B69;border-radius:6px;">
+            <svg width="16" height="20" viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.4" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+          </div>
+          <div class="t-msg-body">
+            <div class="t-msg-header"><span class="t-msg-name" style="color:#7040C0;">Agentforce</span><span class="t-msg-role" style="background:#F0ECFF;color:#7040C0;">Life Sciences</span><span class="t-msg-time">8:18 AM</span></div>
+            <div class="t-msg-text">Got it. <strong>Fit Score:</strong> 87 (High). Adherence risk: Low. I've drafted the structured enrollment plan for Sarah &mdash; stages must be executed in order per protocol. Open the briefing for the full sequence.</div>
+            <div class="af-chat-card" onclick="togglePanel('teams')">
+              <div class="af-card-header"><span class="af-card-badge">Agentforce</span><span class="af-card-title">Sarah Taylor &mdash; Enrollment Plan</span></div>
+              <div class="af-card-rows">
+                <div class="af-card-row"><span class="dot" style="background:#22C55E"></span>Stage 1: Referral Accepted &mdash; <strong>complete</strong></div>
+                <div class="af-card-row"><span class="dot" style="background:#7040C0"></span>Stage 2: Portal Account Creation &mdash; <strong>action required</strong></div>
+                <div class="af-card-row"><span class="dot" style="background:#D1D5DB"></span>Stage 3: eConsent &mdash; locked until Stage 2 complete</div>
+                <div class="af-card-row"><span class="dot" style="background:#D1D5DB"></span>Stage 4: Screening Visit &mdash; locked</div>
+              </div>
+              <div class="af-card-cta">Open enrollment plan &rarr;</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#15803D">DP</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header"><span class="t-msg-name">Dr. Sandeep Patel</span><span class="t-msg-role">Principal Investigator</span><span class="t-msg-time">9:04 AM</span></div>
+            <div class="t-msg-text">Good thread. <span class="mention">@Zayn</span> please confirm Sarah's eConsent is fully signed and verified in the eSource system before her screening visit. No procedures before IC verification &mdash; protocol section 4.2.</div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#6264A7">ZH</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header"><span class="t-msg-name">Zayn Holland</span><span class="t-msg-role">Site Coordinator</span><span class="t-msg-time">9:31 AM</span></div>
+            <div class="t-msg-text">Understood. Portal credentials created and delivered. eConsent payload sent to Sarah's email via our approved channel. Will verify her signed IC in our eSource before any screening.</div>
+            <div class="compliance-banner success">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              All actions logged to Sarah Taylor's audit trail &middot; 21 CFR Part 11 compliant
+            </div>
+          </div>
+        </div>
+
+        <div class="t-msg">
+          <div class="t-msg-avatar" style="background:#B45309">PV</div>
+          <div class="t-msg-body">
+            <div class="t-msg-header"><span class="t-msg-name">Pharmacovigilance Bot</span><span class="t-msg-role">PV / Safety</span><span class="t-msg-time">10:07 AM</span></div>
+            <div class="t-msg-text">Reminder: any participant-reported adverse event &mdash; including competitor product AEs disclosed during screening &mdash; must be routed through the Makana PV process within 24hrs. Agentforce flags these automatically; coordinator confirms classification.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-input"><div class="t-input-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Reply to Recruitment &amp; Enrollment&hellip;
+      </div></div>
+    </div>
+
+    <!-- Agentforce panel — Teams -->
+    <div class="af-panel" id="af-panel-teams">
+      <div class="af-panel-header">
+        <div class="af-panel-title-row">
+          <div class="af-panel-badge-row">
+            <span class="af-badge"><span class="af-badge-dot"></span>Agentforce</span>
+            <span class="af-compliant"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> GCP-Compliant</span>
+          </div>
+          <button class="af-panel-close" onclick="togglePanel('teams')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="af-panel-name">Sarah Taylor &middot; Candidate</div>
+        <div class="af-panel-sub">RA-5698755 <span class="af-sub-dot"></span> Cumulus Clinic <span class="af-sub-dot"></span> Life Sciences Cloud</div>
+      </div>
+
+      <div class="af-panel-tabs">
+        <button class="af-tab active" onclick="switchTab('plan')">Plan</button>
+        <button class="af-tab" onclick="switchTab('match')">Match</button>
+        <button class="af-tab" onclick="switchTab('engage')">Engage</button>
+      </div>
+
+      <div class="af-panel-body">
+        <!-- Plan tab — structured enrollment stages -->
+        <div class="af-panel-section active" id="tab-plan">
+          <div style="padding:11px 14px 8px;border-bottom:1px solid var(--panel-border);">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:4px;">Fit Score &amp; Adherence</div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <div style="font-size:22px;font-weight:800;color:var(--purple);line-height:1;">87</div>
+              <div>
+                <div style="font-size:11px;font-weight:600;">High match &middot; Low adherence risk</div>
+                <div style="font-size:10px;color:var(--text-3);">Predictive AI &middot; clinician-reviewed</div>
+              </div>
+            </div>
+          </div>
+          <div class="stage-list">
+            <div class="stage-item done">
+              <div class="stage-dot"></div>
+              <div class="stage-content">
+                <div class="stage-name">1. Referral Accepted</div>
+                <div class="stage-meta">Verified by Zayn &middot; 8:15 AM today</div>
+              </div>
+              <span class="af-status s-live">Done</span>
+            </div>
+            <div class="stage-item current">
+              <div class="stage-dot"></div>
+              <div class="stage-content">
+                <div class="stage-name">2. Portal Account Creation</div>
+                <div class="stage-meta">Create portal credentials for Sarah</div>
+                <div class="stage-action" onclick="openModal('portal')">Run step &rsaquo;</div>
+              </div>
+              <span class="af-status s-pending">Action</span>
+            </div>
+            <div class="stage-item">
+              <div class="stage-dot"></div>
+              <div class="stage-content">
+                <div class="stage-name">3. eConsent Delivery</div>
+                <div class="stage-meta">Locked &middot; requires Stage 2 complete</div>
+              </div>
+              <span class="af-status s-closed">Locked</span>
+            </div>
+            <div class="stage-item">
+              <div class="stage-dot"></div>
+              <div class="stage-content">
+                <div class="stage-name">4. eConsent Verification</div>
+                <div class="stage-meta">Coordinator verifies signed IC in eSource</div>
+              </div>
+              <span class="af-status s-closed">Locked</span>
+            </div>
+            <div class="stage-item">
+              <div class="stage-dot"></div>
+              <div class="stage-content">
+                <div class="stage-name">5. Screening Visit</div>
+                <div class="stage-meta">No procedures before IC verification</div>
+              </div>
+              <span class="af-status s-closed">Locked</span>
+            </div>
+            <div class="stage-item">
+              <div class="stage-dot"></div>
+              <div class="stage-content">
+                <div class="stage-name">6. Randomization &amp; Enrollment</div>
+                <div class="stage-meta">After eligibility confirmed</div>
+              </div>
+              <span class="af-status s-closed">Locked</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Match tab — auto-matching summary -->
+        <div class="af-panel-section" id="tab-match">
+          <div style="padding:11px 14px 8px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);">Inclusion / Exclusion Match</div>
+          <div style="padding:0 14px 14px;">
+            <div class="elig-item"><div class="elig-icon ok"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Age 18&ndash;75 &middot; <strong>50</strong></div>
+            <div class="elig-item"><div class="elig-icon ok"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Confirmed RA diagnosis &middot; ICD-10 M06.9</div>
+            <div class="elig-item"><div class="elig-icon ok"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>No prior trial enrollment in 12mo</div>
+            <div class="elig-item"><div class="elig-icon ok"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>No autoimmune comorbidity</div>
+            <div class="elig-item"><div class="elig-icon ok"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Within 20mi of Cumulus Clinic</div>
+            <div class="elig-item"><div class="elig-icon ok"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div>Non-smoker</div>
+          </div>
+          <div style="padding:0 14px 14px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:6px;">Source Attribution</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.5;">Inquired via Makana trial search portal &middot; redirected from Google segment ad &middot; consented to share data.</div>
+          </div>
+        </div>
+
+        <!-- Engage tab — communications log -->
+        <div class="af-panel-section" id="tab-engage">
+          <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);">Engagement Journey</div>
+          <div class="af-row"><div class="af-row-icon" style="background:#EFF6FF">&#9993;&#65039;</div><div class="af-row-content"><div class="af-row-label">Welcome Email</div><div class="af-row-text">Sent automatically on registration &middot; IRB-approved template</div></div><span class="af-status s-live">Delivered</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#F0ECFF">&#128241;</div><div class="af-row-content"><div class="af-row-label">SMS Preference Check</div><div class="af-row-text">Sarah opted-in to email + SMS for visit reminders</div></div><span class="af-status s-live">Opted-in</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#FFFBEB">&#128227;</div><div class="af-row-content"><div class="af-row-label">eConsent Reminder Sequence</div><div class="af-row-text">Pre-defined journey &middot; only triggered after Stage 3 unlocks</div></div><span class="af-status s-pending">Queued</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#F0FDF4">&#128173;</div><div class="af-row-content"><div class="af-row-label">In-portal Chat</div><div class="af-row-text">Agent-assisted FAQ &middot; medical questions routed to human MSL</div></div><span class="af-status s-live">Available</span></div>
+        </div>
+      </div>
+
+      <div class="af-panel-actions">
+        <div class="af-actions-label">Actions</div>
+        <div class="af-actions-row">
+          <button class="af-qa primary" onclick="openModal('portal')">&#128274; Create portal account</button>
+          <button class="af-qa" onclick="openModal('candidates')">&#129489;&#8205;&#9877;&#65039; Review candidates</button>
+        </div>
+        <div class="af-actions-row">
+          <button class="af-qa" onclick="openModal('teamupdate')">&#128172; Post team update</button>
+          <button class="af-qa" onclick="openModal('pv')">&#9888;&#65039; Report AE / SAE</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="t-appbar">
+      <div class="t-appbar-af" id="t-appbar-af" onclick="togglePanel('teams')">
+        <svg width="14" height="17" viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="rgba(255,255,255,0.9)" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ OUTLOOK ════ -->
+<div class="shell outlook-shell" id="shell-outlook">
+  <div class="o-topbar">
+    <div class="o-logo">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="4" width="20" height="16" rx="2" fill="rgba(255,255,255,0.9)"/><path d="M2 8l10 6 10-6" stroke="#0078D4" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Outlook &middot; Zayn Holland (Cumulus Clinic)
+    </div>
+    <button class="o-nav-pill active">New mail</button>
+    <button class="o-nav-pill">Reply</button>
+    <div class="o-topbar-right"><div class="t-avatar" style="background:#0078D4">ZH</div></div>
+  </div>
+
+  <div class="o-ribbon">
+    <button class="o-ribbon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2"><path d="M9 14l-4-4 4-4"/><path d="M5 10h11a4 4 0 0 1 0 8h-1"/></svg>Reply</button>
+    <button class="o-ribbon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/></svg>Forward</button>
+    <div class="o-ribbon-sep"></div>
+    <button class="o-ribbon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="#0078D4" stroke-width="2"><path d="M3 6h18M8 6V4h8v2"/></svg>Delete</button>
+    <button class="o-af-btn" onclick="togglePanel('outlook')">
+      <svg width="13" height="16" viewBox="0 0 14 18" fill="none"><path d="M2,1 C8,1 11,5 11,9 C11,13 8,17 2,17" stroke="white" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="M12,1 C6,1 3,5 3,9 C3,13 6,17 12,17" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-linecap="round" fill="none"/><line x1="2.5" y1="5" x2="11.5" y2="5" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2" y1="9" x2="12" y2="9" stroke="white" stroke-width="1.3" stroke-linecap="round"/><line x1="2.5" y1="13" x2="11.5" y2="13" stroke="white" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Agentforce Life Sciences
+    </button>
+  </div>
+
+  <div class="o-body">
+    <div class="o-folders">
+      <div class="o-folder active"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h6l2 2h8a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>Inbox<span class="o-folder-count">4</span></div>
+      <div class="o-folder">Sent</div>
+      <div class="o-folder">Deleted</div>
+      <div class="o-folder" style="padding-left:20px;font-size:11px;margin-top:8px;color:#888;">&#128193; Sarah Taylor</div>
+      <div class="o-folder" style="padding-left:20px;font-size:11px;color:#888;">&#128193; PV Reports</div>
+      <div class="o-folder" style="padding-left:20px;font-size:11px;color:#888;">&#128193; IRB / Compliance</div>
+    </div>
+
+    <div class="o-email-list">
+      <div class="o-email-list-header">Inbox</div>
+      <div class="o-email-item active">
+        <div class="o-email-sender"><span>Sarah Taylor</span><span class="o-email-time">11:14 AM</span></div>
+        <div class="o-email-subject">Re: Question about my screening visit</div>
+        <div class="o-email-preview">Hi Zayn &mdash; quick question about transportation for next Tuesday...</div>
+      </div>
+      <div class="o-email-item unread">
+        <div class="o-email-sender"><span style="display:flex;align-items:center;gap:6px;"><span class="o-unread-dot"></span>Agentforce Life Sciences</span><span class="o-email-time">10:38 AM</span></div>
+        <div class="o-email-subject">eConsent verification complete &mdash; Sarah Taylor</div>
+        <div class="o-email-preview">Sarah's signed IC has been verified in eSource. Source: Makana eConsent app. Date stamp:...</div>
+      </div>
+      <div class="o-email-item unread">
+        <div class="o-email-sender"><span style="display:flex;align-items:center;gap:6px;"><span class="o-unread-dot"></span>Lucas Brooks</span><span class="o-email-time">9:02 AM</span></div>
+        <div class="o-email-subject">Weekly recruitment metrics &mdash; RA-5698755</div>
+        <div class="o-email-preview">Hi Zayn, sharing this week's enrollment funnel performance...</div>
+      </div>
+      <div class="o-email-item">
+        <div class="o-email-sender"><span>IRB Office</span><span class="o-email-time">Yesterday</span></div>
+        <div class="o-email-subject">Approved patient-facing content &mdash; v2.3</div>
+        <div class="o-email-preview">The updated patient education materials have been IRB-approved...</div>
+      </div>
+    </div>
+
+    <div class="o-reading">
+      <div class="o-email-header">
+        <div class="o-email-subject-line">Re: Question about my screening visit</div>
+        <div class="o-email-from">
+          <div class="o-from-avatar">ST</div>
+          <div>
+            <div class="o-from-name">Sarah Taylor <span style="font-weight:400;color:#888;">&lt;sarah.taylor@example.com&gt;</span></div>
+            <div class="o-from-email">To: Zayn Holland</div>
+          </div>
+          <div style="margin-left:auto;"><div class="o-email-meta">Today, 11:14 AM</div></div>
+        </div>
+      </div>
+      <div class="o-email-body">
+        <p>Hi Zayn,</p>
+        <p>Thank you for the welcome email and the portal access &mdash; I was able to sign the eConsent forms last night without any trouble. Really appreciated the clear walkthrough.</p>
+        <p>One quick question before my screening visit on Tuesday: my car will be in the shop that week. Is there any transportation assistance available, or should I plan to arrange my own ride?</p>
+        <p>Also &mdash; I wanted to mention something. About six months ago I had what I think was a mild allergic reaction to a competitor product my previous rheumatologist prescribed. It wasn't serious but I want to make sure it's on record.</p>
+        <p>Thanks again,<br/><strong>Sarah Taylor</strong></p>
+      </div>
+      <div class="o-email-actions">
+        <button class="o-action-btn primary" onclick="togglePanel('outlook')">&#129504; Agentforce Reply</button>
+        <button class="o-action-btn">&#8617; Reply</button>
+        <button class="o-action-btn">&#128203; Log to Salesforce</button>
+      </div>
+    </div>
+
+    <!-- Outlook AF panel -->
+    <div class="af-panel" id="af-panel-outlook">
+      <div class="af-panel-header">
+        <div class="af-panel-title-row">
+          <div class="af-panel-badge-row">
+            <span class="af-badge"><span class="af-badge-dot"></span>Agentforce</span>
+            <span class="af-compliant"><svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> GCP-Compliant</span>
+          </div>
+          <button class="af-panel-close" onclick="togglePanel('outlook')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+        </div>
+        <div class="af-panel-name">Sarah Taylor &middot; Email Context</div>
+        <div class="af-panel-sub">RA-5698755 <span class="af-sub-dot"></span> Stage 4 &mdash; Screening Visit prep</div>
+      </div>
+      <div class="af-panel-tabs">
+        <button class="af-tab active" onclick="switchTab('detected')">Detected</button>
+        <button class="af-tab" onclick="switchTab('reply')">Reply</button>
+      </div>
+      <div class="af-panel-body">
+        <div class="af-panel-section active" id="o-tab-detected">
+          <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);">Agent detected 2 items requiring action</div>
+          <div class="af-row"><div class="af-row-icon" style="background:#F0FDF4">&#128670;</div><div class="af-row-content"><div class="af-row-label">Service Request</div><div class="af-row-text"><em>Transportation assistance</em> for screening visit &mdash; eligible per participant services policy</div></div><span class="af-status s-queued">Action</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#FEF2F2">&#9888;&#65039;</div><div class="af-row-content"><div class="af-row-label">Potential AE Disclosure</div><div class="af-row-text"><em>Competitor product allergic reaction</em> &mdash; must route to PV within 24hrs per protocol</div></div><span class="af-status s-blocked">Required</span></div>
+          <div class="af-row"><div class="af-row-icon" style="background:#F0ECFF">&#128221;</div><div class="af-row-content"><div class="af-row-label">eConsent Status</div><div class="af-row-text">Signed and verified &mdash; Stage 3 complete &mdash; screening unlocked</div></div><span class="af-status s-live">Verified</span></div>
+        </div>
+        <div class="af-panel-section" id="o-tab-reply">
+          <div style="padding:10px 14px 6px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);">Suggested reply &mdash; IRB-approved language</div>
+          <div style="padding:0 14px 12px;">
+            <div style="background:white;border:1.5px solid var(--afls-bdr);border-radius:8px;padding:11px 12px;font-size:12px;line-height:1.55;color:var(--text);">Hi Sarah,<br><br>Thanks for reaching out &mdash; happy to help.<br><br>For Tuesday's visit, we can arrange a ride voucher through our Participant Services team. I'll have one sent to your email today.<br><br>Regarding the reaction you mentioned to your previous medication &mdash; thank you for flagging this. I'm going to make sure it's properly documented through our pharmacovigilance process. Our safety team may reach out for a few additional details; nothing for you to do in the meantime.<br><br>Looking forward to seeing you Tuesday.<br><br>Zayn</div>
+          </div>
+          <div style="padding:10px 14px 14px;">
+            <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:6px;">Auto-actions on send</div>
+            <div style="font-size:11px;color:var(--text-2);line-height:1.7;">&#10003; Create Participant Services case (transportation)<br>&#10003; Route AE disclosure to PV intake (24hr SLA)<br>&#10003; Log all to Sarah's contact record &middot; 21 CFR Part 11</div>
+          </div>
+        </div>
+      </div>
+      <div class="af-panel-actions">
+        <div class="af-actions-label">Actions</div>
+        <div class="af-actions-row">
+          <button class="af-qa primary" onclick="openModal('reply')">&#8617; Send AI-assisted reply</button>
+        </div>
+        <div class="af-actions-row">
+          <button class="af-qa" onclick="openModal('pv')">&#9888;&#65039; Route AE to PV</button>
+          <button class="af-qa" onclick="openModal('voucher')">&#128670; Send voucher</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Candidate review -->
+<div class="modal-overlay" id="modal-candidates" onclick="if(event.target===this)closeModal('candidates')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><div class="modal-icon" style="background:#F0ECFF">&#129489;&#8205;&#9877;&#65039;</div><div><div class="modal-title">Verify Candidate Matches</div><div class="modal-subtitle">RA-5698755 &middot; AI-suggested &middot; coordinator must verify</div></div></div>
+      <button class="modal-close" onclick="closeModal('candidates')">&times;</button>
+    </div>
+    <div class="modal-compliance"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Human-in-the-loop required &middot; AI recommendations are not auto-applied</div>
+    <div class="modal-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:8px;">Select candidates to accept</div>
+      <div class="candidate-card" onclick="toggleCand(this)">
+        <div class="cand-chk on"></div>
+        <div class="cand-info">
+          <div class="cand-name">Sarah Taylor <span class="cand-id">CAND-00214</span></div>
+          <div class="cand-meta">Age 50 &middot; Female &middot; ICD-10 M06.9 (RA) &middot; Mebane, NC</div>
+          <div class="cand-match"><span class="cand-score">Match 87</span><span class="cand-notes">All 12 I/E criteria met</span></div>
+        </div>
+      </div>
+      <div class="candidate-card" onclick="toggleCand(this)">
+        <div class="cand-chk on"></div>
+        <div class="cand-info">
+          <div class="cand-name">Marcus Hill <span class="cand-id">CAND-00215</span></div>
+          <div class="cand-meta">Age 62 &middot; Male &middot; ICD-10 M06.9 &middot; Burlington, NC</div>
+          <div class="cand-match"><span class="cand-score">Match 81</span><span class="cand-notes">All 12 I/E criteria met</span></div>
+        </div>
+      </div>
+      <div class="candidate-card" onclick="toggleCand(this)">
+        <div class="cand-chk on"></div>
+        <div class="cand-info">
+          <div class="cand-name">Priya Desai <span class="cand-id">CAND-00216</span></div>
+          <div class="cand-meta">Age 45 &middot; Female &middot; ICD-10 M06.9 &middot; Raleigh, NC</div>
+          <div class="cand-match"><span class="cand-score">Match 78</span><span class="cand-notes">All 12 I/E criteria met</span></div>
+        </div>
+      </div>
+      <div class="candidate-card" onclick="toggleCand(this)">
+        <div class="cand-chk"></div>
+        <div class="cand-info">
+          <div class="cand-name">James O'Connor <span class="cand-id">CAND-00217</span></div>
+          <div class="cand-meta">Age 58 &middot; Male &middot; ICD-10 M06.9 &middot; Greensboro, NC</div>
+          <div class="cand-match"><span class="cand-score med">Match 64</span><span class="cand-notes">Needs prior trial history confirmation</span></div>
+        </div>
+      </div>
+      <div class="candidate-card" onclick="toggleCand(this)" style="opacity:0.65">
+        <div class="cand-chk"></div>
+        <div class="cand-info">
+          <div class="cand-name">Diane Wu <span class="cand-id">CAND-00218</span></div>
+          <div class="cand-meta">Age 52 &middot; Female &middot; ICD-10 M06.9 &middot; Cary, NC</div>
+          <div class="cand-match"><span class="cand-score low">Excluded</span><span class="cand-notes">Active autoimmune comorbidity (exclusion)</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-left">3 of 5 selected</span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('candidates')">Cancel</button>
+        <button class="btn btn-purple" onclick="confirmCandidates()">Accept selected referrals</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Create portal account -->
+<div class="modal-overlay" id="modal-portal" onclick="if(event.target===this)closeModal('portal')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><div class="modal-icon" style="background:#F0ECFF">&#128274;</div><div><div class="modal-title">Create Portal Account &mdash; Sarah Taylor</div><div class="modal-subtitle">Stage 2 of 6 &middot; Enrollment Plan</div></div></div>
+      <button class="modal-close" onclick="closeModal('portal')">&times;</button>
+    </div>
+    <div class="modal-compliance"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Credentials delivered via approved email channel only &middot; logged to audit trail</div>
+    <div class="modal-body">
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:4px;">Alias name</div><div style="font-size:13px;font-weight:600;border:1.5px solid var(--border);border-radius:6px;padding:8px 11px;">staylor</div></div>
+        <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:4px;">Display nickname</div><div style="font-size:13px;font-weight:600;border:1.5px solid var(--border);border-radius:6px;padding:8px 11px;">Sarah</div></div>
+        <div><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:4px;">Email delivery</div><div style="font-size:13px;color:var(--text-2);border:1.5px solid var(--border);border-radius:6px;padding:8px 11px;background:#FAFAFA;">sarah.taylor@example.com (consented)</div></div>
+      </div>
+      <div style="margin-top:14px;padding:10px 12px;background:#F7F6F4;border-radius:8px;font-size:12px;color:var(--text-2);line-height:1.5;">After creation: Stage 3 (eConsent Delivery) unlocks automatically. Screening can <em>not</em> begin until Stage 4 (verification) is complete.</div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="portal-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('portal')">Cancel</button>
+        <button class="btn btn-purple" id="portal-btn" onclick="doPortal()">Create &amp; advance to Stage 3</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- AI-assisted reply -->
+<div class="modal-overlay" id="modal-reply" onclick="if(event.target===this)closeModal('reply')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><div class="modal-icon" style="background:#F0ECFF">&#9993;&#65039;</div><div><div class="modal-title">AI-assisted Reply</div><div class="modal-subtitle">Sarah Taylor &middot; IRB-approved template</div></div></div>
+      <button class="modal-close" onclick="closeModal('reply')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div contenteditable="true" style="font-size:13px;line-height:1.7;color:var(--text);outline:none;min-height:140px;font-family:inherit;">Hi Sarah,
+
+Thanks for reaching out &mdash; happy to help.
+
+For Tuesday's visit, we can arrange a ride voucher through our Participant Services team. I'll have one sent to your email today.
+
+Regarding the reaction you mentioned to your previous medication &mdash; thank you for flagging this. I'm going to make sure it's properly documented through our pharmacovigilance process. Our safety team may reach out for a few additional details; nothing for you to do in the meantime.
+
+Looking forward to seeing you Tuesday.
+
+Zayn Holland
+Cumulus Clinic &middot; RA-5698755</div>
+    </div>
+    <div class="modal-compliance"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Auto-triggers: Participant Services case + PV intake (24hr SLA) &middot; full audit log</div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="reply-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('reply')">Discard</button>
+        <button class="btn btn-purple" id="reply-btn" onclick="doReply()">Send &amp; trigger actions</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PV / AE report -->
+<div class="modal-overlay" id="modal-pv" onclick="if(event.target===this)closeModal('pv')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><div class="modal-icon" style="background:#FEF2F2">&#9888;&#65039;</div><div><div class="modal-title">Route to Pharmacovigilance</div><div class="modal-subtitle">24hr regulatory SLA &middot; mandatory disclosure</div></div></div>
+      <button class="modal-close" onclick="closeModal('pv')">&times;</button>
+    </div>
+    <div class="modal-compliance" style="background:#FEF2F2;border-color:#FCA5A5;color:#991B1B;"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 9v4M12 17h.01M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg> Subject to FDA / EMA reporting requirements &middot; do not edit clinical detail</div>
+    <div class="modal-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:6px;">Source</div>
+      <div style="font-size:13px;margin-bottom:14px;">Email from Sarah Taylor &middot; 11:14 AM today</div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:6px;">AE classification (AI-suggested, PV-reviewed)</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
+        <span style="padding:4px 10px;background:#FFFBEB;color:#B45309;border-radius:20px;font-size:11px;font-weight:600;">Mild</span>
+        <span style="padding:4px 10px;background:#EFF6FF;color:#1D4ED8;border-radius:20px;font-size:11px;font-weight:600;">Competitor product</span>
+        <span style="padding:4px 10px;background:#F0FDF4;color:#15803D;border-radius:20px;font-size:11px;font-weight:600;">Historical (~6mo ago)</span>
+      </div>
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:6px;">Verbatim disclosure (do not edit)</div>
+      <div style="font-size:12px;color:var(--text-2);background:#F7F6F4;border-radius:8px;padding:11px 12px;line-height:1.6;font-style:italic;">"About six months ago I had what I think was a mild allergic reaction to a competitor product my previous rheumatologist prescribed. It wasn't serious but I want to make sure it's on record."</div>
+      <div style="margin-top:14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:6px;">Routing</div>
+      <div style="font-size:12px;color:var(--text-2);line-height:1.7;">&#10003; Makana PV Intake (primary)<br>&#10003; Site PI &mdash; Dr. Patel (notify)<br>&#10003; Sarah's contact record (audit)</div>
+    </div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="pv-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('pv')">Cancel</button>
+        <button class="btn btn-amber" id="pv-btn" onclick="doPV()">Submit to PV &mdash; start 24hr clock</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Transportation voucher -->
+<div class="modal-overlay" id="modal-voucher" onclick="if(event.target===this)closeModal('voucher')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><div class="modal-icon" style="background:#F0FDF4">&#128670;</div><div><div class="modal-title">Send Transportation Voucher</div><div class="modal-subtitle">Sarah Taylor &middot; Screening visit Tue Jun 16</div></div></div>
+      <button class="modal-close" onclick="closeModal('voucher')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-3);margin-bottom:6px;">Voucher details</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#F7F6F4;border-radius:7px;font-size:12px;"><span style="color:var(--text-3);">Service</span><span style="font-weight:600;">Uber Health (round-trip)</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#F7F6F4;border-radius:7px;font-size:12px;"><span style="color:var(--text-3);">Amount</span><span style="font-weight:600;">$40 ride credit</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#F7F6F4;border-radius:7px;font-size:12px;"><span style="color:var(--text-3);">Valid</span><span style="font-weight:600;">30 days</span></div>
+        <div style="display:flex;justify-content:space-between;padding:8px 12px;background:#F7F6F4;border-radius:7px;font-size:12px;"><span style="color:var(--text-3);">Delivery</span><span style="font-weight:600;">Email to Sarah</span></div>
+      </div>
+      <div style="margin-top:14px;padding:10px 12px;background:#F0ECFF;border-radius:8px;font-size:11px;color:#5830A0;line-height:1.5;"><strong>Note:</strong> Participant Services support only &mdash; transportation, lodging, scheduling. Investigational product discounts are not permitted for clinical trials.</div>
+    </div>
+    <div class="modal-compliance"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Auto-logged as Participant Services case to Sarah's record</div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="voucher-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('voucher')">Cancel</button>
+        <button class="btn btn-green" id="voucher-btn" onclick="doVoucher()">Send voucher</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Team update -->
+<div class="modal-overlay" id="modal-teamupdate" onclick="if(event.target===this)closeModal('teamupdate')">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-left"><div class="modal-icon" style="background:#F0ECFF">&#128172;</div><div><div class="modal-title">Post Team Update</div><div class="modal-subtitle">#Recruitment &amp; Enrollment</div></div></div>
+      <button class="modal-close" onclick="closeModal('teamupdate')">&times;</button>
+    </div>
+    <div class="modal-body">
+      <textarea id="team-text" style="width:100%;border:1.5px solid var(--border);border-radius:8px;padding:11px 12px;font-size:13px;line-height:1.6;font-family:inherit;outline:none;min-height:120px;">Quick update: 3 of 5 new candidates verified and accepted for RA-5698755. Sarah Taylor advancing to Stage 2 (portal account). One candidate flagged for PV review (historical competitor AE). Will keep the thread posted as enrollment progresses.</textarea>
+    </div>
+    <div class="modal-compliance"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> No PHI in update text &middot; audit-logged to the channel</div>
+    <div class="modal-footer">
+      <span class="modal-footer-left" id="team-status"></span>
+      <div class="modal-footer-right">
+        <button class="btn btn-ghost" onclick="closeModal('teamupdate')">Cancel</button>
+        <button class="btn btn-purple" id="team-btn" onclick="doTeam()">Post to channel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg><span id="toast-text">Done</span></div>
+
+<script>
+var panelState={teams:false,outlook:false};
+var currentApp='teams';
+
+function switchApp(app){
+  currentApp=app;
+  document.querySelectorAll('.shell').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.app-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('shell-'+app).classList.add('active');
+  document.getElementById('tab-'+app).classList.add('active');
+}
+
+function togglePanel(app){
+  panelState[app]=!panelState[app];
+  document.getElementById('af-panel-'+app).classList.toggle('open',panelState[app]);
+  var navAf=document.getElementById('t-nav-af'), abAf=document.getElementById('t-appbar-af');
+  if(navAf)navAf.classList.toggle('panel-open',panelState.teams);
+  if(abAf)abAf.classList.toggle('active',panelState.teams);
+}
+
+function switchTab(name){
+  var prefix=currentApp==='outlook'?'o-':'';
+  document.querySelectorAll('.af-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.af-panel-section').forEach(s=>s.classList.remove('active'));
+  event.target.classList.add('active');
+  var el=document.getElementById(prefix+'tab-'+name)||document.getElementById('tab-'+name);
+  if(el)el.classList.add('active');
+}
+
+function openModal(n){document.getElementById('modal-'+n).classList.add('open');}
+function closeModal(n){document.getElementById('modal-'+n).classList.remove('open');}
+function toggleCand(el){el.querySelector('.cand-chk').classList.toggle('on');}
+
+function spin(){return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation:spin 0.8s linear infinite"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>';}
+
+function showToast(msg){
+  var t=document.getElementById('toast');
+  document.getElementById('toast-text').textContent=msg;
+  t.style.display='flex';
+  clearTimeout(window._tt);
+  window._tt=setTimeout(function(){t.style.opacity='0';t.style.transition='opacity 0.5s';setTimeout(function(){t.style.display='none';t.style.opacity='1';t.style.transition='';},500);},3000);
+}
+
+function withBusy(btnId,statusId,msg,after){
+  var b=document.getElementById(btnId), s=document.getElementById(statusId);
+  var orig=b.innerHTML;
+  b.disabled=true; b.innerHTML=spin()+' '+msg;
+  if(s)s.textContent=msg+'…';
+  setTimeout(function(){
+    b.disabled=false; b.innerHTML=orig; if(s)s.textContent='';
+    after();
+  },1400);
+}
+
+function confirmCandidates(){
+  var n=document.querySelectorAll('#modal-candidates .cand-chk.on').length;
+  closeModal('candidates');
+  showToast(n+' candidate'+(n>1?'s':'')+' accepted — enrollment plans created');
+}
+function doPortal(){withBusy('portal-btn','portal-status','Creating account',function(){closeModal('portal');showToast('Portal account created — Stage 3 unlocked');});}
+function doReply(){withBusy('reply-btn','reply-status','Sending',function(){closeModal('reply');showToast('Reply sent — PV intake + Services case created');});}
+function doPV(){withBusy('pv-btn','pv-status','Routing to PV',function(){closeModal('pv');showToast('AE routed to Pharmacovigilance — 24hr SLA started');});}
+function doVoucher(){withBusy('voucher-btn','voucher-status','Sending voucher',function(){closeModal('voucher');showToast('$40 transport voucher sent to Sarah — logged to Salesforce');});}
+function doTeam(){
+  var text=document.getElementById('team-text').value.trim();
+  if(!text)return;
+  withBusy('team-btn','team-status','Posting',function(){
+    closeModal('teamupdate');
+    var msgs=document.getElementById('t-messages');
+    var now=new Date();
+    var timeStr=now.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    var html='<div class="t-msg" style="margin-top:4px;"><div class="t-msg-avatar" style="background:#6264A7">ZH</div><div class="t-msg-body"><div class="t-msg-header"><span class="t-msg-name">Zayn Holland</span><span class="t-msg-role">Site Coordinator</span><span class="t-msg-time">'+timeStr+'</span></div><div class="t-msg-text">'+text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/\n/g,'<br>')+'</div></div></div>';
+    msgs.insertAdjacentHTML('beforeend',html);
+    msgs.scrollTop=msgs.scrollHeight;
+    showToast('Update posted to #Recruitment & Enrollment');
+  });
+}
+
+setTimeout(function(){togglePanel('teams');},400);
+</script>
+</body>
+</html>
